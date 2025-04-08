@@ -1,0 +1,13 @@
+# Ignore environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+frontend/dist/
+backend/dist/
+
+# System files
+.DS_Store
