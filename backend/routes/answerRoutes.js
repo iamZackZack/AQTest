@@ -1,12 +1,11 @@
-// routes/answerRoutes.js
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const Answer = require("../models/Answer");
 
 // Save new answer
 router.post("/", async (req, res) => {
   const answer = new Answer(req.body);
-
   try {
     const savedAnswer = await answer.save();
     res.status(201).json(savedAnswer);
@@ -16,7 +15,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ NEW: Fetch all answers (needed for leaderboard)
+// Fetch all answers needed for leaderboard
 router.get("/", async (req, res) => {
   try {
     const answers = await Answer.find();

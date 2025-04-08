@@ -83,7 +83,6 @@ function App() {
   useEffect(() => {
     axios.get("http://localhost:5001/api/questions")
       .then(res => {
-        console.log("Fetched Questions:", res.data); // Debugging
         setQuestions(res.data);
         setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
       })
@@ -300,7 +299,6 @@ function App() {
         }));
       }
     } else {
-      console.log("Test Completed! Saving results...");
       const score = calculateScore(questions, userAnswers); // ✅ calculate it here
       setFinalScore(score);                                 // ✅ now score is defined
       saveTestResults(score);
@@ -332,7 +330,6 @@ function App() {
     };
       
     axios.post("http://localhost:5001/api/answers", resultData)
-    .then(res => console.log("Result saved!", res.data))
     .catch(err => console.error("Error saving result:", err));
   };
 
@@ -391,7 +388,6 @@ function App() {
             resetApp("welcome")
           }}
           onStartQuiz={() => {
-            console.log("Pseudonym selected:", pseudonym);
             setUserData((prev) => ({ ...prev, pseudonym }));
             setCurrentPage("quiz");
           }}

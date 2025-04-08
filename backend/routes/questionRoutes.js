@@ -1,6 +1,7 @@
 const express = require("express");
-const router = express.Router();
+const mongoose = require("mongoose");
 const Question = require("../models/Question");
+const router = express.Router();
 
 // Get All Questions
 router.get("/", async (req, res) => {
@@ -8,6 +9,7 @@ router.get("/", async (req, res) => {
     const questions = await Question.find();
     res.json(questions);
   } catch (err) {
+    console.error("❌ Error fetching questions from DB:", err);
     res.status(500).json({ message: err.message });
   }
 });
