@@ -1,16 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./styles/welcome-page.css";
 
 const WelcomePage = ({ language, setLanguage, onContinue, toLeaderboard }) => {
-  const direction = 1;
-  const setDirection = () => {
-    if (direction == 1) {
-      direction = -1;
-    } else {
-      direction = 1;
-    }
-  }
   
   return (
     <AnimatePresence mode="wait">
