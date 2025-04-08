@@ -1,0 +1,43 @@
+.drag-order-container {
+    text-align: center;
+  }
+  
+.drag-list {
+  list-style-type: none;
+  padding: 0;
+  width: 250px;
+  margin: auto;
+  min-height: 200px;
+  transition: all 150ms ease-in-out;
+}
+
+.drag-item {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid black;
+  background-color: #ffffff;
+  color: black;
+  cursor: grab;
+  text-align: center;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  transition: transform 200ms ease;
+  will-change: transform;
+}
+
+.drag-item-image {
+  max-width: 120px;
+  max-height: 120px;
+  display: block;
+  margin: auto;
+  transition: transform 200ms ease, background-color 0.2s ease;
+  will-change: transform;
+}
+
+.drag-item.dragging {
+  z-index: 1000;
+}

@@ -1,0 +1,55 @@
+.rotated-grid-container {
+    display: inline-block;
+    flex-direction: column;
+    align-items: center;
+    transform: rotate(45deg); /* Rotate the entire grid */
+    margin-top: 100px;
+    margin-bottom: 100px;
+  }
+  
+.rotated-grid-row {
+  display: flex;
+  justify-content: center;
+}
+
+.rotated-grid-cell {
+  width: 50px;
+  height: 50px;
+  font-size: 1.2rem;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: white;
+  position: relative;
+  overflow: hidden;
+  line-height: normal;
+  word-break: break-word;
+}
+
+.rotated-grid-cell span {
+  transform: rotate(-45deg);
+  display: inline-block;
+  text-align: center;
+  height: 100%;
+  width: 80%;
+}
+
+.rotated-grid-cell:hover {
+  background-color: lightgray;
+}
+
+.rotated-grid-cell.selected {
+  background-color: #ecbe92;
+}
+
+.rotated-grid-start-image {
+  width: 50px;
+  height: 50px;
+  transform: rotate(-45deg);
+  padding-left: 7px;
+}
+

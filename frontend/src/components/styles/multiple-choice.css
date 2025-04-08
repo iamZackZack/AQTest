@@ -1,0 +1,88 @@
+.options {
+  list-style: none;
+  padding: 0;
+}
+
+.option {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid black;
+  background-color: #ffffff;
+  color: black;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.3s ease-in-out;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+}  
+
+.option-image {
+  max-width: 100px; /* Adjust size */
+  max-height: 100px;
+  display: block;
+  margin: auto;
+}
+
+.option:hover {
+    background-color: lightgray;
+  }
+  
+.option.selected {
+    background-color: #ecbe92;
+}
+  
+.grid-default {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grid for 4 or 5 options (Two Columns) */
+.grid-two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+  
+/* Grid for 6 options (2 rows, 3 columns) */
+.grid-two-rows-three-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 10px;
+}
+
+/* Grid for 8 options (2 rows, 4 columns) */
+.grid-two-rows-four-columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 10px;
+}
+  
+/* Grid for 9 options (3 rows, 3 columns) */
+.grid-three-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 10px;
+}
+  
+/* Grid for 12 options (3 rows, 4 columns) */
+.grid-three-columns-four-rows {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 10px;
+}
+
+/* Grid for 16 options (4 rows, 4 columns) */
+.grid-four-columns-four-rows {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, auto);
+  gap: 10px;
+}

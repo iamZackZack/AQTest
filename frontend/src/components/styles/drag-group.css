@@ -1,0 +1,60 @@
+.drag-group-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+.drag-group-options-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  justify-content: center;
+}
+  
+.drag-group-columns {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+  
+.drag-group {
+  width: 120px;
+  min-height: 100px;
+  padding: 10px;
+  border: 2px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border-radius: 5px;
+}
+
+.drag-group.color-0 {
+  background-color: #ecbe92;
+}
+
+.drag-group.color-1 {
+  background-color: #ebc8a6;
+}
+
+.drag-group.color-2 {
+  background-color: #e8d2bb;
+}
+
+.drag-group.color-3 {
+  background-color: #e7dacd;
+}
+
+.drag-item2 {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #000;
+  margin: 5px;
+  cursor: grab;
+  text-align: center;
+  width: 80px;
+}

@@ -1,0 +1,61 @@
+.hex-grid-outer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  min-height: 500px; /* or however tall your grid is */
+  overflow-x: auto; /* optional horizontal scroll if needed */
+}
+
+.hex-grid-wrapper {
+  position: relative;
+  width: calc(60px * 0.75 * 9); /* 9 = estimated max columns (adjust as needed) */
+  height: calc(52px * 9);       /* 9 = estimated max rows (adjust as needed) */
+}
+
+.hex-cell {
+  position: absolute;
+  width: 60px;
+  height: 52px;
+  background-color: black; /* This is the border color */
+  clip-path: polygon(
+    25% 0%, 75% 0%,
+    100% 50%,
+    75% 100%, 25% 100%,
+    0% 50%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+  
+.hex-cell-content {
+  width: 97%;
+  height: 97%;
+  clip-path: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+  
+/* Color cycling */
+.color-a { background-color: #ffffff; }
+
+.hex-cell-content.selected {
+  background-color: #ecbe92 !important;
+}
+
+.hex-cell:hover .hex-cell-content {
+  background-color: lightgray !important;
+}
+
+.hex-icon {
+  width: 50px;
+  height: 45px;
+  object-fit: contain;
+  pointer-events: none;
+  padding-left: 7px;
+}

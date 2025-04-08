@@ -1,0 +1,76 @@
+.either-or-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .either-or-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .either-or-text {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  /* ✅ Styling for Question Image */
+  .either-or-image {
+    max-width: 150px;
+    max-height: 150px;
+    display: block;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 2px solid black;
+  }
+  
+  .either-or-choices {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+  }
+  
+  /* ✅ Fix button alignment & selection */
+  .either-or-button {
+    flex: 1;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 2px solid black;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    transition: 0.3s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+  }
+  
+  /* ✅ Styling for Choice Images */
+  .either-or-choice-image {
+    max-width: 150px;
+    max-height: 150px;
+    display: block;
+    margin: auto;
+  }
+  
+  /* ✅ Fix Hover & Selection Behavior */
+  .either-or-button:hover {
+    background-color: lightgray;
+    border-color: black;
+  }
+  
+  .either-or-button.selected {
+    background-color: #ecbe92;
+    border-color: black;
+    color: black;
+  }
+  
+  
