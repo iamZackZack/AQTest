@@ -81,7 +81,7 @@ function App() {
 
   // Question Fetching Handler
   useEffect(() => {
-    axios.get("http://localhost:5001/api/questions")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/questions`)
       .then(res => {
         setQuestions(res.data);
         setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
@@ -329,7 +329,7 @@ function App() {
       timestamp: new Date().toISOString()
     };
       
-    axios.post("http://localhost:5001/api/answers", resultData)
+    axios.post(`${import.meta.env.VITE_API_URL}/api/answers`, resultData)
     .catch(err => console.error("Error saving result:", err));
   };
 

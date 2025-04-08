@@ -16,7 +16,7 @@ const LeaderboardPage = ({ goToWelcome }) => {
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5001/api/answers")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/answers`)
       .then((res) => {
         const filtered = res.data
           .filter(entry => entry.useName && entry.pseudonym && entry.finalScore != null)
