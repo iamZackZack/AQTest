@@ -25,16 +25,16 @@ body {
 }
 
 .bg-1 {
-  background-image: url('/images/background1.png');
+  background-image: url('/images/background1.webp');
 }
 .bg-2 {
-  background-image: url('/images/background2.png');
+  background-image: url('/images/background2.webp');
 }
 .bg-3 {
-  background-image: url('/images/background3.png');
+  background-image: url('/images/background3.webp');
 }
 .bg-4 {
-  background-image: url('/images/background4.png');
+  background-image: url('/images/background4.webp');
 }
 
 .book {
