@@ -23,7 +23,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
-  background-color: white;
+  background-color: ivory;
   position: relative;
   overflow: hidden;
   line-height: normal;
@@ -39,17 +39,51 @@
 }
 
 .rotated-grid-cell:hover {
-  background-color: lightgray;
+  background-color: rgb(150, 175, 137);
 }
 
 .rotated-grid-cell.selected {
-  background-color: #ecbe92;
+  background-color: rgb(214, 247, 196);
 }
 
 .rotated-grid-start-image {
   width: 50px;
   height: 50px;
   transform: rotate(-45deg);
-  padding-left: 7px;
+  padding-left: 0px;
+  padding-right: 6px;
 }
 
+.rotated-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  gap: 0px;
+}
+
+.rotated-grid-row-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 95px; /* increase spacing between left/center/right */
+  width: 100%; /* allow full horizontal width */
+}
+
+.direction-label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+.top-label,
+.bottom-label {
+  text-align: center;
+  padding-right: 15px;
+}
+
+.left-label,
+.right-label {
+  text-align: center;
+}

@@ -49,16 +49,20 @@ const WelcomePage = ({ language, setLanguage, onContinue, toLeaderboard }) => {
           </p>
 
           <div className="button-container">
-            <button className="prev-button" onClick={toLeaderboard}>
+            <button className="welcome-prev-button" onClick={toLeaderboard}>
               Go to Leaderboard
             </button>
-            <button className="next-button" onClick={onContinue}>
+            <button className="welcome-next-button" onClick={onContinue}>
               Continue →
             </button>
           </div>
 
           <p className="footer-note">
-            AT.V6 | Still in development. Issues? Contact <a href="mailto:abstraction@cdtm.de">abstraction@cdtm.de</a>
+            <strong>Developer's Note: Not optimized for mobile!</strong>
+          </p>
+
+          <p className="footer-note">
+            AT.V6 | Issues? Contact <a href="mailto:abstraction@cdtm.de">abstraction@cdtm.de</a>
           </p>
       </motion.div>
     </AnimatePresence>

@@ -20,7 +20,7 @@
 
 .leaderboard-reset {
   padding: 12px 25px;
-  background-color: lightblue;
+  background-color: ivory;
   color: black;
   border: 1px solid black;
   border-radius: 5px;
@@ -31,7 +31,7 @@
 }
 
 .leaderboard-reset:hover {
-  background-color: rgb(100, 174, 198);
+  background-color: rgb(183, 183, 170);
 }
 
 .leaderboard-table-container {
@@ -54,7 +54,7 @@
 }
 
 .leaderboard-table th {
-  background-color: #dfa26a;
+  background-color: rgb(183, 183, 170);
   color: white;
   font-weight: bold;
 }

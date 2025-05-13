@@ -22,7 +22,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
-  background-color: white;
+  background-color: ivory;
   position: relative;
   overflow: hidden;
   line-height: normal;
@@ -38,11 +38,11 @@
 }
 
 .grid-cell:hover {
-  background-color: lightgray;
+  background-color: rgb(150, 175, 137);
 }
 
 .grid-cell.selected {
-  background-color: #ecbe92;
+  background-color: rgb(214, 247, 196);
 }
 
 .grid-start-image {

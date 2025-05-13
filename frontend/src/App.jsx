@@ -4,7 +4,6 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Styles
-import "./styles.css";
 import "../global/styles/base.css";
 
 // Components
@@ -38,9 +37,9 @@ const getGridClass = (numOptions) => {
 };
 
 const getBackgroundClass = (index) => {
-  if (index < 10) return "bg-1";
-  if (index < 20) return "bg-2";
-  if (index < 30) return "bg-3";
+  if (index < 8) return "bg-1";
+  if (index < 17) return "bg-2";
+  if (index < 20) return "bg-3";
   return "bg-4";
 };
 
@@ -83,26 +82,37 @@ function App() {
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL}/api/questions`)
       .then(res => {
-        setQuestions(res.data);
-        setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
+        console.log("Fetched Questions:", res.data);
+        if (res.data.length > 0 && Array.isArray(res.data[0].options)) {
+          setQuestions(res.data);
+          setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
+        } else {
+          console.error("⚠️ No questions returned or missing options field");
+        }
       })
       .catch(err => console.error("Error fetching questions:", err));
   }, []);
 
   useEffect(() => {
-    const newStep = Math.floor(currentQuestionIndex / 10);
+    const calculateStep = (index) => {
+      if (index <= 7) return 0;
+      if (index <= 16) return 1;
+      if (index <= 19) return 2;
+      return 3;
+    };
+  
+    const newStep = calculateStep(currentQuestionIndex);
     const stepChanged = newStep !== backgroundStep;
     const isFirstTime = currentQuestionIndex === 0 && !firstRenderHandled;
   
-    // Only delay when background changes or on first quiz render
     if (stepChanged || isFirstTime) {
       setShowBook(false);
   
       const timer = setTimeout(() => {
         setShowBook(true);
         if (isFirstTime) setFirstRenderHandled(true);
-        setBackgroundStep(newStep); // ✅ Update after delay to ensure clean transition
-      }, 2000); // 2 seconds delay
+        setBackgroundStep(newStep);
+      }, 2000);
   
       return () => clearTimeout(timer);
     } else {
@@ -421,12 +431,21 @@ function App() {
   
                   <div className={`text-image-container ${hasImageOptions ? "with-image" : ""}`}>
                     <div className="text-content">
-                      <p
-                        className="flavor-text"
-                        dangerouslySetInnerHTML={{
-                          __html: questions[currentQuestionIndex]?.flavorText,
-                        }}
-                      ></p>
+                      <div className="flavor-text-container">
+                        <p
+                          className="flavor-text"
+                          dangerouslySetInnerHTML={{
+                            __html: questions[currentQuestionIndex]?.flavorText,
+                          }}
+                        ></p>
+                        {questions[currentQuestionIndex]?.startImage && (
+                          <img
+                            src={questions[currentQuestionIndex].startImage}
+                            alt="Start"
+                            className="start-image-inline"
+                          />
+                        )}
+                      </div>
                       {!hasImageOptions && questions[currentQuestionIndex]?.qImage && (
                       <img
                         src={questions[currentQuestionIndex].qImage}
@@ -459,7 +478,6 @@ function App() {
                     }}
                   ></p>
   
-                  {/* ✅ Dynamic Question Renderer */}
                   <RenderQuestion
                     question={questions[currentQuestionIndex]}
                     userAnswers={userAnswers}
@@ -478,14 +496,13 @@ function App() {
                     getGridClass={getGridClass}
                   />
   
-                  {/* ✅ Navigation Buttons */}
                   <div className="button-container">
                     {currentQuestionIndex > 0 && (
-                      <button onClick={handlePrevQuestion} className="prev-button">
+                      <button onClick={handlePrevQuestion} className="base-prev-button">
                         ← Back
                       </button>
                     )}
-                    <button onClick={handleNextQuestion} className="next-button">
+                    <button onClick={handleNextQuestion} className="base-next-button">
                       {currentQuestionIndex + 1 < questions.length ? "Next →" : "Finish"}
                     </button>
                   </div>

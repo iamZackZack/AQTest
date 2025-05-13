@@ -5,18 +5,18 @@ import "./styles/story-intro.css"; // New CSS file
 const instructions = [
   {
     id: 1,
-    icon: "/images/icon-answers.png",
+    icon: "/images/story/story1.png",
     text: "Each puzzle states how many answers are expected. All questions have an answer.",
   },
   {
     id: 2,
-    icon: "/images/icon-timer.png",
+    icon: "/images/story/story3.png",
     text: "Time is of the essence, and you will be tracked. Complete the test as fast as possible.",
   },
   {
     id: 3,
-    icon: "/images/icon-navigation.png",
-    text: "You can use the buttons at the bottom to navigate back to or skip questions.",
+    icon: "/images/story/story2.png",
+    text: "You can use the buttons at the bottom to go back or skip questions.",
   },
 ];
 
@@ -106,6 +106,7 @@ const StoryIntroPage = ({ selections, setSelections, onStartQuiz, pseudonym, set
               className={`instruction-box ${selections.includes(id) ? "selected" : ""}`}
               onClick={() => toggleSelection(id)}
             >
+              <img src={icon} alt="icon" className="instruction-icon" />
               <p dangerouslySetInnerHTML={{ __html: text }} />
             </div>
           ))}
@@ -113,12 +114,12 @@ const StoryIntroPage = ({ selections, setSelections, onStartQuiz, pseudonym, set
 
         <div className="button-container">
           <button
-            className="prev-button"
+            className="story-prev-button"
             onClick={() => {goBackToWelcome()}}>
             ← Back
           </button>
           <button
-            className="next-button"
+            className="story-next-button"
             onClick={() => {
               if (!pseudonym || !isClean(pseudonym)) {
                 setError("Please enter a valid adventurer name.");

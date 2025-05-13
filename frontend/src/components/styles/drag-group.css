@@ -33,19 +33,19 @@
 }
 
 .drag-group.color-0 {
-  background-color: #ecbe92;
+  background-color: rgb(214, 247, 196);
 }
 
 .drag-group.color-1 {
-  background-color: #ebc8a6;
+  background-color: rgb(200, 232, 184);
 }
 
 .drag-group.color-2 {
-  background-color: #e8d2bb;
+  background-color: rgb(185, 212, 171);
 }
 
 .drag-group.color-3 {
-  background-color: #e7dacd;
+  background-color: rgb(150, 175, 137);
 }
 
 .drag-item2 {

@@ -18,6 +18,10 @@ const EndingPage = ({
     setInitialEmail(userData.email);
   }, []);
 
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData((prev) => ({ ...prev, [name]: value }));
@@ -27,16 +31,45 @@ const EndingPage = ({
     }
   };
 
-  const handleSendResults = () => {
-    setEmailSent(true); // No actual API call yet
-    setInitialEmail(userData.email);
+  const handleSendResults = async () => {
+    if (!isValidEmail(userData.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+  
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/mail`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userData.email })
+      });
+  
+      setEmailSent(true);
+      setInitialEmail(userData.email);
+    } catch (err) {
+      console.error("Error sending results email:", err);
+    }
   };
 
-  const handleSendFeedback = () => {
-    setFeedbackSent(true); // No actual API call yet
+  const handleSendFeedback = async () => {
+    try {
+      const payload = {
+        feedback: userData.feedback,
+        timestamp: new Date().toISOString(),
+      };
+  
+      await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  
+      setFeedbackSent(true);
+    } catch (err) {
+      console.error("Error sending feedback:", err);
+    }
   };
 
-  // Default rankConsent to true if it hasn't been set yet
   useEffect(() => {
     if (userData.rankConsent === null) {
       setUserData((prev) => ({ ...prev, rankConsent: true }));
@@ -71,14 +104,14 @@ const EndingPage = ({
           <button
             className="email-button"
             onClick={handleSendResults}
-            disabled={emailSent || !userData.email}
+            disabled={emailSent || !isValidEmail(userData.email)}
           >
             Send Results
           </button>
         </div>
         {emailSent && <p className="sent-message">Your results have been sent to your email.</p>}
 
-        <label><strong>Do you want to appear on the leaderboard {userData.pseudonym}?</strong></label>
+        <label><strong>Do you want to appear on the leaderboard as <em>{userData.pseudonym}</em>?</strong></label>
         <div className="button-toggle">
           <button
             className={`leaderboard-button ${userData.rankConsent === true ? "active" : ""}`}
@@ -103,6 +136,7 @@ const EndingPage = ({
             rows="4"
             disabled={feedbackSent}
           ></textarea>
+          {feedbackSent && <p className="sent-message">Thank you for your feedback!</p>}
           <div className="feedback-button-wrapper">
             <button
               className="feedback-button"

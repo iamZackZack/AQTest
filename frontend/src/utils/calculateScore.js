@@ -31,7 +31,6 @@ export const calculateScore = (questions, userAnswers) => {
       const type = question.type;
   
       if (!userAnswer || !correct) {
-        console.warn(`Skipping question ${qId}:`, { userAnswer, correct });
         return;
       };
   

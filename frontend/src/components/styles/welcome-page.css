@@ -27,7 +27,7 @@
   }
   
   .highlight-purple {
-    color: #e6933a;
+    color: rgb(106, 141, 90);
     font-weight: bold;
   }
   
@@ -41,7 +41,7 @@
   .language-button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: white;
+    background-color: ivory;
     border: 1px solid black;
     color: black;
     border-radius: 5px;
@@ -50,11 +50,11 @@
   }
   
   .language-button.active {
-    background-color: lightblue;
+    background-color: rgb(214, 247, 196);
   }
   
   .language-button:hover {
-    background-color: lightgray;
+    background-color: rgb(150, 175, 137);
   }
   
   ul.guidelines {
@@ -72,22 +72,22 @@
     margin-top: 30px;
   }
   
-  .next-button,
-  .prev-button {
+  .welcome-next-button,
+  .welcome-prev-button {
     padding: 12px 25px;
     font-size: 18px;
     cursor: pointer;
     border: none;
-    background-color: lightblue;
+    background-color: ivory;
     color: black;
     border-radius: 5px;
     transition: 0.3s ease-in-out;
     border: 1px solid black;
   }
   
-  .next-button:hover,
-  .prev-button:hover {
-    background-color: rgb(100, 174, 198);
+  .welcome-next-button:hover,
+  .welcome-prev-button:hover {
+    background-color: rgb(183, 183, 170);
   }
   
   .footer-note {

@@ -19,10 +19,14 @@ mongoose.connect(process.env.MONGODB_URI)
 // Import Routes
 const questionRoutes = require("./routes/questionRoutes");
 const answerRoutes = require("./routes/answerRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
+const mailRoutes = require("./routes/mailRoutes");
 
 // Use Routes
 app.use("/api/questions", questionRoutes);
 app.use("/api/answers", answerRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/mail", mailRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {
