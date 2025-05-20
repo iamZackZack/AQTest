@@ -15,21 +15,31 @@
 }
   
 .drag-group-columns {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  justify-items: center;
 }
   
 .drag-group {
-  width: 120px;
-  min-height: 100px;
-  padding: 10px;
-  border: 2px solid black;
+  width: 170px;
+  min-height: 150px;
+  padding: 20px;
+  border: none; /* Start clean */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.drag-group:nth-child(1),
+.drag-group:nth-child(3) {
+  border-right: 2px solid black;
+}
+
+/* Add BOTTOM border to top row (index 0 and 1) */
+.drag-group:nth-child(1),
+.drag-group:nth-child(2) {
+  border-bottom: 2px solid black;
 }
 
 .drag-group.color-0 {

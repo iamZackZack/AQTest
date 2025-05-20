@@ -1,0 +1,28 @@
+.pterodactyl-shadow {
+  position: fixed;
+  position: fixed;
+  bottom: -100px; /* start lower */
+  left: -200px;   /* start farther left */
+  width: 900px;   /* bigger! */
+  height: 380px;
+  background: url("../../../public/images/shadow.png") no-repeat center/contain;
+  animation: flyDiagonal 2.5s ease-in-out forwards;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+}
+
+@keyframes flyDiagonal {
+  0% {
+    transform: translate(0, 0) scale(1.2) rotate(-10deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(130vw, -100vh) scale(1.6) rotate(5deg);
+    opacity: 0;
+  }
+}

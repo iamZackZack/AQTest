@@ -1,0 +1,32 @@
+.rain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.raindrop {
+  position: absolute;
+  top: -10px;
+  width: 4px;
+  height: 17px;
+  background: rgba(255, 255, 255, 0.6);
+  animation: fall 1.5s linear infinite;
+  animation-delay: calc(var(--i) * -0.1s);
+  left: calc(var(--i) * 1%);
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}

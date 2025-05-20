@@ -51,7 +51,6 @@ const DragGroupQuestion = ({ question, userAnswers, setUserAnswers, handleDragEn
             <Droppable key={groupIndex} droppableId={groupIndex.toString()}>
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps} className={`drag-group color-${groupIndex}`}>
-                  <h3>{`Group ${groupIndex + 1}`}</h3>
                   {initialGroups[groupIndex].map((word, index) => (
                     <Draggable key={word} draggableId={word} index={index}>
                       {(provided) => (

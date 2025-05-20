@@ -12,7 +12,14 @@ import WelcomePage from "./components/WelcomePage";
 import StoryIntroPage from "./components/StoryIntroPage";
 import EndingPage from "./components/EndingPage";
 import LeaderboardPage from "./components/LeaderboardPage";
+import DemographicsPage from "./components/DemographicsPage"
 import { calculateScore } from "./utils/calculateScore";
+
+// Effects
+import RainEffect from "./components/effects/rain";
+import PterodactylShadow from "./components/effects/shadow";
+import LadybugEffect from "./components/effects/insect";
+import GustOfLeaves from "./components/effects/wind";
 
 // Utility
 const shuffleArray = (array) => {
@@ -51,7 +58,7 @@ const cipherPseudonym = (name) => {
 function App() {
 
   // Page States
-  const [currentPage, setCurrentPage] = useState("welcome"); // "welcome", "story", or "quiz"
+  const [currentPage, setCurrentPage] = useState("welcome");
   const [language, setLanguage] = useState("en"); // Default language
   const [introSelections, setIntroSelections] = useState([]);
   const [userData, setUserData] = useState({
@@ -77,6 +84,13 @@ function App() {
   const [backgroundStep, setBackgroundStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [firstRenderHandled, setFirstRenderHandled] = useState(false);
+
+  // Effects
+  const [showRain, setShowRain] = useState(false);
+  const [showShadow, setShowShadow] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const [showLadybug, setShowLadybug] = useState(false);
+  const [showGust, setShowGust] = useState(false);
 
   // Question Fetching Handler
   useEffect(() => {
@@ -117,6 +131,12 @@ function App() {
       return () => clearTimeout(timer);
     } else {
       setShowBook(true);
+    }
+    if (showBook && currentQuestionIndex === 20) {
+      setIsShaking(true);
+      setTimeout(() => {
+        setIsShaking(false);
+      }, 1000);
     }
   }, [currentQuestionIndex, firstRenderHandled, backgroundStep]);
   
@@ -269,36 +289,78 @@ function App() {
   const handleNextQuestion = () => {
     const currentQuestion = questions[currentQuestionIndex];
     setDirection(1);
-  
+
+    // Inject rain effect after Q1
+    if (currentQuestionIndex === 0) {
+      setShowRain(true);
+      setTimeout(() => {
+        setShowRain(false);
+        proceedToNextQuestion(currentQuestion);
+      }, 2000);
+      return;
+    }
+
+    // Inject pterodactyl shadow before Q10
+    if (currentQuestionIndex === 8) {
+      setShowShadow(true);
+      setTimeout(() => {
+        setShowShadow(false);
+        proceedToNextQuestion(currentQuestion);
+      }, 2000);
+      return;
+    }
+
+    if (currentQuestionIndex === 20) {
+      setShowLadybug(true);
+      setTimeout(() => {
+        setShowLadybug(false);
+        proceedToNextQuestion(currentQuestion);
+      }, 4000);
+      return;
+    }
+
+    if (currentQuestionIndex === 24) {
+      setShowGust(true);
+      setTimeout(() => {
+        setShowGust(false);
+        proceedToNextQuestion(currentQuestion);
+      }, 4000);
+      return;
+    }
+
+    proceedToNextQuestion(currentQuestion);
+  };
+
+  const proceedToNextQuestion = (currentQuestion) => {
     if (currentQuestion.type === "text-entry") {
       setUserAnswers((prevAnswers) => ({
         ...prevAnswers,
         [currentQuestion._id]: textEntryAnswers[currentQuestion._id] || "",
       }));
     }
-  
+
     if (currentQuestion.type === "drag-group") {
       setUserAnswers((prevAnswers) => ({
         ...prevAnswers,
         [currentQuestion._id]: userAnswers[currentQuestion._id] || [[], []],
       }));
     }
-  
+
     if (currentQuestionIndex + 1 < questions.length) {
       const nextIndex = currentQuestionIndex + 1;
       const nextQuestion = questions[nextIndex];
       const nextQuestionId = nextQuestion._id;
-  
+
       setCurrentQuestionIndex(nextIndex);
       setSelectedAnswers(userAnswers[nextQuestionId] || []);
-  
+
       if (nextQuestion.type === "text-entry") {
         setTextEntryAnswers((prevAnswers) => ({
           ...prevAnswers,
           [nextQuestionId]: userAnswers[nextQuestionId] || "",
         }));
       }
-  
+
       if (
         ["single-multiple-choice", "multiple-multiple-choice", "drag-order"].includes(nextQuestion.type) &&
         !shuffledOptionsMap[nextIndex]
@@ -309,10 +371,10 @@ function App() {
         }));
       }
     } else {
-      const score = calculateScore(questions, userAnswers); // ✅ calculate it here
-      setFinalScore(score);                                 // ✅ now score is defined
+      const score = calculateScore(questions, userAnswers);
+      setFinalScore(score);
       saveTestResults(score);
-      setCurrentPage("end");
+      setCurrentPage("demographics");
     }
   };
 
@@ -365,7 +427,13 @@ function App() {
     <div
       className={`book-container ${getBackgroundClass(currentQuestionIndex)} ${!showBook ? "background-only" : ""}`}
     >
-      {/* ✅ Progress Bar only visible during the quiz */}
+      {/* Animation overlays */}
+      {showRain && <RainEffect duration={8000} />}
+      {showShadow && <PterodactylShadow />}
+      {showLadybug && <LadybugEffect />}
+      {showGust && <GustOfLeaves />}
+
+      {/* Progress Bar only visible during the quiz */}
       {currentPage === "quiz" && (
         <div className="progress-bar-wrapper">
           <div
@@ -409,7 +477,7 @@ function App() {
       {/* Main Quiz Interface */}
       {currentPage === "quiz" && showBook && (
         <motion.div 
-          className="book"
+          className={`book ${isShaking ? "shake" : ""}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeInOut" }}
@@ -511,6 +579,13 @@ function App() {
             </motion.div>
           </AnimatePresence>
         </motion.div>
+      )}
+      {currentPage === "demographics" && (
+        <DemographicsPage
+          userData={userData}
+          setUserData={setUserData}
+          onNext={() => setCurrentPage("end")}
+        />
       )}
       {currentPage === "end" && (
         <EndingPage

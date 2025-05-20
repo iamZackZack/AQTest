@@ -1,0 +1,42 @@
+.ladybug-fly {
+  position: fixed;
+  width: 80px;
+  height: 80px;
+  background: url("../../../public/images/ladybug.png") no-repeat center/contain;
+  z-index: 9999;
+  animation: ladybug-fly-path 4s ease-in-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ladybug-fly-path {
+  0% {
+    top: -100px;
+    left: -100px;
+    transform: scale(1) rotate(45deg);
+  }
+  40% {
+    top: 45%;
+    left: 45%;
+    transform: scale(1.1) rotate(45deg);
+  }
+  50% {
+    top: 46%;
+    left: 47%;
+    transform: scale(1.05) rotate(40deg);
+  }
+  60% {
+    top: 44%;
+    left: 46%;
+    transform: scale(1.1) rotate(50deg);
+  }
+  80% {
+    top: 45%;
+    left: 45%;
+    transform: scale(1.1) rotate(45deg);
+  }
+  100% {
+    top: -100px;
+    left: 100vw;
+    transform: scale(1.1) rotate(45deg);
+  }
+}
