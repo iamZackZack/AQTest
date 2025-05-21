@@ -13,7 +13,7 @@ import StoryIntroPage from "./components/StoryIntroPage";
 import EndingPage from "./components/EndingPage";
 import LeaderboardPage from "./components/LeaderboardPage";
 import DemographicsPage from "./components/DemographicsPage"
-import { calculateScore } from "./utils/calculateScore";
+import { buildScoreRow } from "./utils/calculateScore";
 
 // Effects
 import RainEffect from "./components/effects/rain";
@@ -371,10 +371,29 @@ function App() {
         }));
       }
     } else {
-      const score = calculateScore(questions, userAnswers);
-      setFinalScore(score);
-      saveTestResults(score);
-      setCurrentPage("demographics");
+      const row = buildScoreRow(questions, userAnswers).reverse();
+
+      console.log("🧠 Original userAnswers:", userAnswers);
+      console.log("📊 Converted row for model:", row);
+
+      fetch(`${import.meta.env.VITE_API_URL}/api/score`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ response: row })
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Player's EAP Score:", data.score);
+        setFinalScore(data.score);                // Show this on EndingPage
+        saveTestResults(data.score);              // Save EAP-based score
+        setCurrentPage("demographics");           // Move forward
+      })
+      .catch((err) => {
+        console.error("Scoring error:", err);
+        setCurrentPage("demographics");           // Still proceed even if error
+      });    
     }
   };
 

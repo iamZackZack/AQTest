@@ -10,7 +10,7 @@ app.use(cors());
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("✅ Connected to MongoDB Atlas");
+    console.log("Connected to MongoDB Atlas");
   })
   .catch(err => {
     console.error("MongoDB connection error:", err);
@@ -21,12 +21,14 @@ const questionRoutes = require("./routes/questionRoutes");
 const answerRoutes = require("./routes/answerRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const mailRoutes = require("./routes/mailRoutes");
+const scoreRoutes = require("./routes/scoreRoute");
 
 // Use Routes
 app.use("/api/questions", questionRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/mail", mailRoutes);
+app.use("/api/score", scoreRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {
