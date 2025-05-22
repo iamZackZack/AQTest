@@ -40,6 +40,9 @@ router.post("/", (req, res) => {
   // Run R script
   console.log("🚀 Running R script...");
 
+  console.log("📁 Current working directory:", path.join(__dirname, ".."));
+  console.log("🔍 Checking if R script exists:", fs.existsSync(path.join(__dirname, "..", "score_player.R")));
+
   const rScriptPath = path.join(__dirname, "..", "score_player.R");
   if (!fs.existsSync(rScriptPath)) {
     console.error("❌ score_player.R NOT FOUND at:", rScriptPath);
