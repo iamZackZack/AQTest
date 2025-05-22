@@ -6,7 +6,11 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "https://aq-frontend.onrender.com",
+  methods: ["GET", "POST", "PATCH"],
+  allowedHeaders: ["Content-Type"]
+}));
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
