@@ -14,8 +14,13 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     git \
     python3 \
-    python3-pip \
-    r-base
+    python3-pip
+
+# Add modern R repository (>= 4.1 required for mirt)
+RUN echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" >> /etc/apt/sources.list && \
+    curl -fsSL https://cloud.r-project.org/bin/linux/debian/marutter_pubkey.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/cran.gpg && \
+    apt-get update && \
+    apt-get install -y r-base
 
 # Install Node.js (v18 LTS)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
@@ -25,7 +30,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
 RUN pip3 install pandas matplotlib PyMuPDF
 
 # Install R packages
-RUN R -e "install.packages(c('mirt', 'jsonlite'), repos='https://cloud.r-project.org')"
+RUN Rscript -e "install.packages(c('mirt', 'jsonlite'), repos='https://cloud.r-project.org')"
 
 # Set working directory
 WORKDIR /app
@@ -33,10 +38,10 @@ WORKDIR /app
 # Copy backend files
 COPY . /app
 
-# Install Node.js dependencies (⬅️ This was missing)
+# Install Node.js dependencies
 RUN npm install
 
-# Expose app port (adjust if needed)
+# Expose the port used by Render
 EXPOSE 10000
 
 # Start the backend
