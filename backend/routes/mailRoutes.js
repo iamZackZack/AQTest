@@ -1,34 +1,82 @@
 const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
+const { execSync } = require("child_process");
+const Answer = require("../models/Answer"); // Check path
 
 router.post("/", async (req, res) => {
-  const { email } = req.body;
+  const { pseudonym, email } = req.body;
 
-  if (!email) return res.status(400).json({ message: "Missing email" });
+  console.log("📩 /api/mail called with:");
+  console.log("   → Pseudonym:", pseudonym);
+  console.log("   → Email to send to:", email);
 
-  // Set up your transporter
-  const transporter = nodemailer.createTransport({
-    service: "gmail", // or use another provider like SendGrid
-    auth: {
-      user: process.env.MAIL_USER, // Your Gmail or SMTP user
-      pass: process.env.MAIL_PASS  // App password (not your Gmail login)
-    }
-  });
-
-  const mailOptions = {
-    from: process.env.MAIL_USER,
-    to: email,
-    subject: "Your Abstraction Test Results",
-    text: "Thank you for taking the Abstraction Test!\n\nThis is a test email just to confirm we can send messages."
-  };
+  if (!pseudonym || !email) {
+    console.warn("❌ Missing pseudonym or email in request body.");
+    return res.status(400).json({ message: "Missing pseudonym or email" });
+  }
 
   try {
+    // 🔍 Lookup player by pseudonym only
+    const player = await Answer.findOne({ pseudonym });
+
+    if (!player) {
+      console.warn("❌ No matching player found for pseudonym:", pseudonym);
+      return res.status(404).json({ message: "Player not found" });
+    }
+
+    const logit = player.logitScore ?? 0;
+    const facetScores = [
+      player.facetScores.RA ?? 0,
+      player.facetScores.PR ?? 0,
+      player.facetScores.G ?? 0,
+      player.facetScores.R ?? 0,
+      player.facetScores.LC ?? 0
+    ];
+
+    console.log("✅ Found player data.");
+    console.log("   → Logit:", logit);
+    console.log("   → Facets:", facetScores);
+
+    // 🧠 Generate the report
+    const args = [logit, ...facetScores].join(" ");
+    console.log("📄 Generating report with args:", args);
+    execSync(`python3 reports/generate_report.py ${args}`, { stdio: "inherit" });
+
+    console.log("✅ Report PDF generated.");
+
+    // ✉️ Email it
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: email,
+      subject: "Your Abstraction Test Report",
+      text: "Thank you for taking the Abstraction Test! Your personalized report is attached.",
+      attachments: [
+        {
+          filename: "Abstraction_Report.pdf",
+          path: "reports/final_report.pdf",
+          contentType: "application/pdf"
+        }
+      ]
+    };
+
+    console.log("📤 Sending report to:", email);
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Email sent!" });
+
+    console.log("✅ Email sent successfully.");
+    res.status(200).json({ message: "Report sent!" });
+
   } catch (err) {
-    console.error("Email send error:", err);
-    res.status(500).json({ message: "Failed to send email" });
+    console.error("🔥 Error sending report:", err);
+    res.status(500).json({ message: "Failed to send report." });
   }
 });
 

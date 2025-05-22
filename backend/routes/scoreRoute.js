@@ -10,9 +10,9 @@ let dXHeaders = null;
 
 try {
   dXHeaders = fs.readFileSync(dXPath, "utf8").split("\n")[0].trim();
-  console.log("✅ Loaded dX.csv headers:", dXHeaders);
+  // console.log("✅ Loaded dX.csv headers:", dXHeaders);
 } catch (err) {
-  console.error("❌ Failed to read dX.csv:", err);
+  // console.error("❌ Failed to read dX.csv:", err);
 }
 
 router.post("/", (req, res) => {
@@ -23,7 +23,7 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: "Invalid response format" });
   }
 
-  console.log("📝 Received score row:", response);
+  // console.log("📝 Received score row:", response);
 
   // Save new response to CSV
   const csvPath = path.join(__dirname, "..", "new_response.csv");
@@ -31,14 +31,14 @@ router.post("/", (req, res) => {
 
   try {
     fs.writeFileSync(csvPath, fullCsvContent);
-    console.log("✅ Wrote new_response.csv");
+    // console.log("✅ Wrote new_response.csv");
   } catch (err) {
-    console.error("❌ Failed to write new_response.csv:", err);
+    // console.error("❌ Failed to write new_response.csv:", err);
     return res.status(500).json({ error: "Failed to write CSV file" });
   }
 
   // Run R script
-  console.log("🚀 Running R script...");
+  // console.log("🚀 Running R script...");
 
   const r = spawn("Rscript", ["score_player.R"], {
     cwd: path.join(__dirname, ".."),
@@ -47,24 +47,27 @@ router.post("/", (req, res) => {
   let output = "";
   r.stdout.on("data", (data) => {
     output += data.toString();
-    console.log("📤 R output:", data.toString());
+    // console.log("📤 R output:", data.toString());
   });
 
   r.stderr.on("data", (data) => {
-    console.error("❗ R script stderr:", data.toString());
+    // console.error("❗ R script stderr:", data.toString());
   });
 
   r.on("close", (code) => {
-    console.log(`📦 R script exited with code ${code}`);
-    const match = output.match(/(\d+)\s*$/); // match last number printed (the % score)
+    // console.log(`📦 R script exited with code ${code}`);
+    // console.log("📤 R output:", output);
 
-    if (match) {
-      const score = parseInt(match[1], 10);
-      console.log("🎯 Parsed final EAP score:", score);
-      res.json({ score });
-    } else {
-      console.error("❌ Could not parse score from R output:", output);
-      res.status(500).json({ error: "Could not parse score from R output" });
+    try {
+      const result = JSON.parse(output);  // ✅ PARSE JSON FROM R
+      if (typeof result.percent === "number" && typeof result.logit === "number") {
+        res.json({ score: result.percent, logit: result.logit });
+      } else {
+        throw new Error("Invalid JSON structure");
+      }
+    } catch (err) {
+      // console.error("❌ Failed to parse JSON from R output:", err);
+      res.status(500).json({ error: "Could not parse R output as JSON" });
     }
   });
 });
