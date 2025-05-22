@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip
 
-# Install modern R (>= 4.1) and GPG key directly
+# Install modern R (>= 4.1) from CRAN with working key
 RUN apt-get update && \
-    apt-get install -y gnupg curl software-properties-common dirmngr && \
-    curl -fsSL https://cloud.r-project.org/bin/linux/debian/cran40.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/cran.gpg && \
-    echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" >> /etc/apt/sources.list && \
+    apt-get install -y curl gnupg dirmngr software-properties-common && \
+    curl -fsSL https://cran.r-project.org/bin/linux/debian/marutter_pubkey.asc | gpg --dearmor -o /usr/share/keyrings/cran-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/cran-archive-keyring.gpg] https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list && \
     apt-get update && \
     apt-get install -y r-base
             
