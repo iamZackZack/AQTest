@@ -24,16 +24,13 @@ RUN pip3 install --break-system-packages pandas matplotlib PyMuPDF
 # Set working directory
 WORKDIR /app
 
-# Copy server and essential files
+# Copy server and folders
 COPY backend/server.js /app/server.js
-
-# Copy folders
 COPY backend/routes /app/routes
 COPY backend/models /app/models
 COPY backend/reports /app/reports
 
-# Copy required R and data files
-COPY backend/score_Player.R /app/score_Player.R
+# Copy required data files
 COPY backend/model.rds /app/model.rds
 COPY backend/dX.csv /app/dX.csv
 
@@ -42,6 +39,9 @@ COPY backend/package*.json /app/
 
 # Install Node packages
 RUN npm install
+
+# Optional: Debug what made it in
+# RUN ls -R /app
 
 # Expose app port
 EXPOSE 10000

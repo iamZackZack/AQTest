@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
   console.log("📁 Current working directory:", path.join(__dirname, ".."));
   console.log("🔍 Checking if R script exists:", fs.existsSync(path.join(__dirname, "..", "score_player.R")));
 
-  const rScriptPath = path.join(__dirname, "..", "score_player.R");
+  const rScriptPath = path.join(__dirname, "..", "reports", "score_Player.R");
   if (!fs.existsSync(rScriptPath)) {
     console.error("❌ score_player.R NOT FOUND at:", rScriptPath);
     return res.status(500).json({ error: "R script missing on server" });
@@ -51,7 +51,7 @@ router.post("/", (req, res) => {
     console.log("✅ Found score_player.R at:", rScriptPath);
   }
 
-  const r = spawn("Rscript", ["score_player.R"], {
+  const r = spawn("Rscript", ["reports/score_Player.R"], {
     cwd: path.join(__dirname, ".."),
   });
 
