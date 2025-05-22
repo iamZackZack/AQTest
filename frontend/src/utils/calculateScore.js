@@ -1,6 +1,14 @@
 export const buildScoreRow = (questions, userAnswers) => {
   const scores = [];
 
+  const facetStats = {
+    RA: { total: 0, correct: 0 },
+    PR: { total: 0, correct: 0 },
+    G:  { total: 0, correct: 0 },
+    R:  { total: 0, correct: 0 },
+    LC: { total: 0, correct: 0 },
+  };
+
   const cleanString = (str) =>
     str.toLowerCase().replace(/[^a-z0-9]/gi, "").trim();
 
@@ -15,8 +23,15 @@ export const buildScoreRow = (questions, userAnswers) => {
     const max = question.maxPoint || 1;
     const type = question.type;
 
+    // 🔧 Always count total per facet, even if user didn't answer
+    if (question.abstractionAbility) {
+      for (const facet of question.abstractionAbility) {
+        facetStats[facet].total++;
+      }
+    }
+
     if (!userAnswer || !correct) {
-      scores.push(0); // unanswered or invalid = 0
+      scores.push(0);
       continue;
     }
 
@@ -39,7 +54,7 @@ export const buildScoreRow = (questions, userAnswers) => {
         const intersection = [...userSet].filter((val) =>
           correctSet.has(val)
         );
-        score = Math.min(intersection.length, max); // cap at maxPoint
+        score = Math.min(intersection.length, max);
         break;
       }
 
@@ -94,7 +109,25 @@ export const buildScoreRow = (questions, userAnswers) => {
     }
 
     scores.push(score);
+
+    // ✅ Now update correct counts
+    if (score === max && question.abstractionAbility) {
+      for (const facet of question.abstractionAbility) {
+        facetStats[facet].correct++;
+      }
+    }
   }
 
-  return scores; // array of length == number of questions
+  // Derive Facet Percentages
+  const facetPercentages = {};
+  for (const key in facetStats) {
+    const { total, correct } = facetStats[key];
+    facetPercentages[key] = total > 0 ? Math.round((correct / total) * 100) : null;
+    console.log(key, total, correct)
+  }
+
+  return {
+    scores,              // the row for R model
+    facetPercentages     // abstraction facet breakdown
+  };
 };

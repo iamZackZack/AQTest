@@ -108,3 +108,13 @@ button:hover {
   margin-top: 2px;
   margin-bottom: 6px;
 }
+
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-style: italic;
+  text-align: center;
+}

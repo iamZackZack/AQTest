@@ -195,6 +195,11 @@ textarea:disabled {
   cursor: not-allowed;
 }
 
+.next-button:disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+
 .feedback-section {
   margin-bottom: 30px;
 }

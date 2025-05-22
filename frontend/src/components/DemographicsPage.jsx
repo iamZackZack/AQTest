@@ -42,7 +42,13 @@ const DemographicsPage = ({ userData, setUserData, onNext }) => {
 
   return (
     <div className="demographics-page">
-      <h2>Tell us about yourself!</h2>
+      <div className="loading-section">
+        <img
+         src="/images/gears.gif"
+         alt="Loading..."
+         style={{ width: "100px", height: "60px" }} />
+        <p>We are calculating your Abstraction Quotient.<br />Meanwhile, please fill in some details about yourself for demographics purposes.</p>
+      </div>
 
       <label>University:</label>
       <select value={university} onChange={handleUniversityChange}>

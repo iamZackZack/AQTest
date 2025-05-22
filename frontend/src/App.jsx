@@ -96,7 +96,7 @@ function App() {
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL}/api/questions`)
       .then(res => {
-        console.log("Fetched Questions:", res.data);
+        // console.log("Fetched Questions:", res.data);
         if (res.data.length > 0 && Array.isArray(res.data[0].options)) {
           setQuestions(res.data);
           setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
@@ -371,10 +371,13 @@ function App() {
         }));
       }
     } else {
-      const row = buildScoreRow(questions, userAnswers).reverse();
+      // 1. Show Demographics page right away
+      setCurrentPage("demographics");
 
-      console.log("🧠 Original userAnswers:", userAnswers);
-      console.log("📊 Converted row for model:", row);
+      // 2. Start background scoring
+      const { scores: row, facetPercentages } = buildScoreRow(questions, userAnswers);
+      // console.log("Original userAnswers:", userAnswers);
+      // console.log("Converted row for model:", row);
 
       fetch(`${import.meta.env.VITE_API_URL}/api/score`, {
         method: "POST",
@@ -383,17 +386,17 @@ function App() {
         },
         body: JSON.stringify({ response: row })
       })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Player's EAP Score:", data.score);
-        setFinalScore(data.score);                // Show this on EndingPage
-        saveTestResults(data.score);              // Save EAP-based score
-        setCurrentPage("demographics");           // Move forward
-      })
-      .catch((err) => {
-        console.error("Scoring error:", err);
-        setCurrentPage("demographics");           // Still proceed even if error
-      });    
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log("Player's EAP Score:", data.score);
+          // console.log("Logit:", data.logit);
+          setFinalScore(data.score);           // Store to show on EndingPage
+          setUserData((prev) => ({ ...prev, logit: data.logit })); // store logit for later
+        })
+        .catch((err) => {
+          console.error("Scoring error:", err);
+          setFinalScore(null);                 // Still allow to proceed
+        });
     }
   };
 
@@ -412,13 +415,44 @@ function App() {
   // Handle Test Results
   const saveTestResults = (score) => {
     const cipheredPseudonym = cipherPseudonym(userData.pseudonym || "");
+    const { scores: row, facetPercentages } = buildScoreRow(questions, userAnswers);
+
+    const mapLogitToAbstractionLevel = (logit) => {
+      if (logit < -2) return 0;
+      if (logit >= -2 && logit < -1) return 1;
+      if (logit >= -1 && logit < 0) return 2;
+      if (logit >= 0 && logit < 1) return 3;
+      return 4;
+    };
+
+    const logit = userData.logit || 0;
+    const abstractionLvl = mapLogitToAbstractionLevel(logit);
+
     const resultData = {
-      answers: userAnswers,
-      finalScore: score,
+      answers: userAnswers,                  // Raw answers
+      correctedRow: row.reverse(),            // R-compatible row
+      finalScore: score,                    // From R model
       pseudonym: cipheredPseudonym,
       useName: userData.rankConsent ?? true,
-      timestamp: new Date().toISOString()
+      logitScore: userData.logit || 0,
+      abstractionLevel: abstractionLvl,
+      timestamp: new Date().toISOString(),
+      demographics: {                       // New demographics block
+        university: userData.university,
+        degree: userData.degree,
+        level: userData.level,
+        subjectField: userData.subjectField,
+        rating: userData.rating,
+        educationYears: userData.educationYears,
+        gpa: userData.gpa,
+        gender: userData.gender,
+        age: userData.age,
+        languageSkill: userData.languageSkill
+      },
+      facetScores: facetPercentages
     };
+
+    console.log(resultData);
       
     axios.post(`${import.meta.env.VITE_API_URL}/api/answers`, resultData)
     .catch(err => console.error("Error saving result:", err));
@@ -603,7 +637,10 @@ function App() {
         <DemographicsPage
           userData={userData}
           setUserData={setUserData}
-          onNext={() => setCurrentPage("end")}
+          onNext={() => {
+            saveTestResults(finalScore);
+            setCurrentPage("end");
+          }}
         />
       )}
       {currentPage === "end" && (

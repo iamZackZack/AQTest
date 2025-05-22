@@ -41,9 +41,11 @@ const EndingPage = ({
       await fetch(`${import.meta.env.VITE_API_URL}/api/mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userData.email })
-      });
-  
+        body: JSON.stringify({
+          pseudonym: btoa(userData.pseudonym.trim()), // this is the ID
+          email: userData.email                        // this is where to send
+        })
+      });      
       setEmailSent(true);
       setInitialEmail(userData.email);
     } catch (err) {
@@ -76,6 +78,32 @@ const EndingPage = ({
     }
   }, [userData.rankConsent]);
 
+  const updateConsent = async (value) => {
+    if (!userData.pseudonym || userData.pseudonym.trim() === "") {
+      console.error("❌ Cannot update consent — pseudonym is empty.");
+      return;
+    }
+
+    const pseudonym = btoa(userData.pseudonym.trim());
+
+    setUserData((prev) => ({ ...prev, rankConsent: value }));
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/consent`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pseudonym, useName: value })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        console.warn("Consent update failed:", result.message);
+      }
+    } catch (err) {
+      console.error("Failed to update leaderboard consent:", err);
+    }
+  };
+  
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -115,16 +143,16 @@ const EndingPage = ({
         <div className="button-toggle">
           <button
             className={`leaderboard-button ${userData.rankConsent === true ? "active" : ""}`}
-            onClick={() => setUserData((prev) => ({ ...prev, rankConsent: true }))}
+            onClick={() => updateConsent(true)}
           >
             Yes
           </button>
           <button
             className={`leaderboard-button ${userData.rankConsent === false ? "active" : ""}`}
-            onClick={() => setUserData((prev) => ({ ...prev, rankConsent: false }))}
+            onClick={() => updateConsent(false)}
           >
             No
-          </button>
+          </button>        
         </div>
 
         <div className="feedback-section">
