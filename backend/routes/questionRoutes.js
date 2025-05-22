@@ -5,8 +5,10 @@ const router = express.Router();
 
 // Get All Questions
 router.get("/", async (req, res) => {
+  console.log("📥 /api/questions hit");
   try {
     const questions = await Question.find();
+    console.log("✅ DB returned:", questions);
     res.json(questions);
   } catch (err) {
     console.error("❌ Error fetching questions from DB:", err);

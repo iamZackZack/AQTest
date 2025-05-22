@@ -39,10 +39,6 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-app.get("/api/questions", (req, res) => {
-  res.json([{ test: "Hello from backend!" }]);
-});
-
 // Define port
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
