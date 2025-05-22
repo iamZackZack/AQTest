@@ -17,11 +17,14 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 # Add modern R repository (>= 4.1 required for mirt)
+# Add CRAN R repository (modern R >= 4.1 needed for mirt)
 RUN echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" >> /etc/apt/sources.list && \
-    curl -fsSL https://cloud.r-project.org/bin/linux/debian/marutter_pubkey.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/cran.gpg && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://cloud.r-project.org/bin/linux/debian/cran40.asc | gpg --dearmor -o /etc/apt/keyrings/cran-archive-keyring.gpg && \
+    apt-key add /etc/apt/keyrings/cran-archive-keyring.gpg && \
     apt-get update && \
     apt-get install -y r-base
-
+    
 # Install Node.js (v18 LTS)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
