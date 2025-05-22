@@ -16,15 +16,14 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip
 
-# Install modern R (>= 4.1) and required keys
+# Install modern R (>= 4.1) and GPG key directly
 RUN apt-get update && \
-    apt-get install -y gnupg2 dirmngr software-properties-common && \
+    apt-get install -y gnupg curl software-properties-common dirmngr && \
+    curl -fsSL https://cloud.r-project.org/bin/linux/debian/cran40.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/cran.gpg && \
     echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" >> /etc/apt/sources.list && \
-    gpg --keyserver keyserver.ubuntu.com --recv-key 95C3CFC4 && \
-    gpg --export 95C3CFC4 | tee /etc/apt/trusted.gpg.d/cran.gpg > /dev/null && \
     apt-get update && \
     apt-get install -y r-base
-        
+            
 # Install Node.js (v18 LTS)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
