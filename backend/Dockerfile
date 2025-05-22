@@ -34,7 +34,7 @@ WORKDIR /app
 COPY . /app
 
 # Expose app port (adjust if needed)
-EXPOSE 5001
+EXPOSE 10000
 
 # Start the backend
 CMD ["node", "server.js"]
