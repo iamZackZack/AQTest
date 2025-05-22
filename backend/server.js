@@ -45,3 +45,5 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
+const fs = require("fs");
+console.log("✅ Exists?", fs.existsSync("./score_player.R"));
