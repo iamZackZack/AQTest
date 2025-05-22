@@ -33,6 +33,9 @@ WORKDIR /app
 # Copy backend files
 COPY . /app
 
+# Install Node.js dependencies (⬅️ This was missing)
+RUN npm install
+
 # Expose app port (adjust if needed)
 EXPOSE 10000
 
