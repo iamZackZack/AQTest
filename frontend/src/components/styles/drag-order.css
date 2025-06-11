@@ -29,6 +29,7 @@
   box-sizing: border-box;
   transition: transform 200ms ease;
   will-change: transform;
+  flex-grow: 1; /* Allow the item to expand */
 }
 
 .drag-item-image {
@@ -42,4 +43,51 @@
 
 .drag-item.dragging {
   z-index: 1000;
+}
+
+.drag-flex-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.drag-list-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.drag-index {
+  width: 30px;
+  font-weight: bold;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.abstract-label-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding-top: 60px;
+  padding-bottom: 5px;
+  text-align: right;
+  width: 20%;
+}
+
+.abstract-label-top,
+.abstract-label-bottom {
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.abstract-label-spacer {
+  padding: 220px;
 }

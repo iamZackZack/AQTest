@@ -15,7 +15,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import "./styles/drag-order.css";
 
-const SortableItem = ({ id }) => {
+const SortableItem = ({ id, questionId }) => {
   const {
     attributes,
     listeners,
@@ -50,8 +50,10 @@ const SortableItem = ({ id }) => {
   );
 };
 
-const DragOrderQuestion = ({ question, userAnswers, setUserAnswers }) => {
+const DragOrderQuestion = ({ question, userAnswers, setUserAnswers, language }) => {
   const questionId = question._id;
+  const isNumberedList = question.questionID === "Q119";
+  const isAbstractScale = question.questionID === "Q104";
 
   // ✅ Prefer shuffled options if available
   const defaultOrder = (question.shuffledOptions || question.options).map((o) => o.value);
@@ -87,19 +89,38 @@ const DragOrderQuestion = ({ question, userAnswers, setUserAnswers }) => {
 
   return (
     <div className="drag-order-container">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          <ul className="drag-list">
-            {items.map((id) => (
-              <SortableItem key={`${questionId}-${id}`} id={id} />
-            ))}
-          </ul>
-        </SortableContext>
-      </DndContext>
+      <div className="drag-flex-wrapper">
+        {isAbstractScale && (
+          <div className="abstract-label-column">
+            <div className="abstract-label-top">
+              {language === "de" ? "Detailliertesten" : "Most Detailed"}
+            </div>
+            <div className="abstract-label-spacer" />
+            <div className="abstract-label-bottom">
+              {language === "de" ? "Einfachsten" : "Simplest"}
+            </div>
+          </div>
+        )}
+
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={items} strategy={verticalListSortingStrategy}>
+            <ul className="drag-list">
+              {items.map((id, index) => (
+                <div className="drag-list-wrapper" key={`${questionId}-${id}`}>
+                  {isNumberedList && (
+                    <span className="drag-index">{index + 1}</span>
+                  )}
+                  <SortableItem id={id} questionId={question.questionID} />
+                </div>
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
+      </div>
     </div>
   );
 };

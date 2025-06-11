@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: "https://aq-frontend.onrender.com",
+  origin: ["https://aq-frontend.onrender.com", "http://localhost:5173"],
   methods: ["GET", "POST", "PATCH"],
   allowedHeaders: ["Content-Type"]
 }));
@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Import Routes
 const questionRoutes = require("./routes/questionRoutes");
+const questionDeRoutes = require("./routes/questionDeRoutes");
 const answerRoutes = require("./routes/answerRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const mailRoutes = require("./routes/mailRoutes");
@@ -29,6 +30,7 @@ const scoreRoutes = require("./routes/scoreRoute");
 
 // Use Routes
 app.use("/api/questions", questionRoutes);
+app.use("/api/questions_de", questionDeRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/mail", mailRoutes);
@@ -46,4 +48,4 @@ app.listen(PORT, () => {
 });
 
 const fs = require("fs");
-console.log("✅ Exists?", fs.existsSync("./score_player.R"));
+console.log("✅ Exists?", fs.existsSync("./reports/score_player.R"));

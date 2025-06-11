@@ -46,31 +46,44 @@ const DragGroupQuestion = ({ question, userAnswers, setUserAnswers, handleDragEn
           )}
         </Droppable>
 
-        <div className="drag-group-columns">
-          {Array.from({ length: groupCount }).map((_, groupIndex) => (
-            <Droppable key={groupIndex} droppableId={groupIndex.toString()}>
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps} className={`drag-group color-${groupIndex}`}>
-                  {initialGroups[groupIndex].map((word, index) => (
-                    <Draggable key={word} draggableId={word} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="drag-item2"
-                        >
-                          {word}
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          ))}
+        <div className="drag-group-layout">
+          <div className="criteria-label-top">
+            {navigator.language.startsWith("de") ? "Kriterium 1" : "Criteria 1"}
+          </div>
+
+          <div className="drag-group-grid-wrapper">
+            <div className="criteria-label-side">
+              {navigator.language.startsWith("de") ? "Kriterium 2" : "Criteria 2"}
+            </div>
+
+            <div className="drag-group-columns">
+              {Array.from({ length: groupCount }).map((_, groupIndex) => (
+                <Droppable key={groupIndex} droppableId={groupIndex.toString()}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} className={`drag-group color-${groupIndex}`}>
+                      {initialGroups[groupIndex].map((word, index) => (
+                        <Draggable key={word} draggableId={word} index={index}>
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="drag-item2"
+                            >
+                              {word}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              ))}
+            </div>
+          </div>
         </div>
+
       </DragDropContext>
     </div>
   );

@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "./styles/ending-page.css";
 import { motion, AnimatePresence } from "framer-motion";
+import endingTranslations from "../translations/endingTranslations";
 
 const EndingPage = ({
   result,
   userData,
   setUserData,
   onSubmitFinalForm,
+  language,
   shareLink = "https://abstract-test.com",
   goToWelcome
 }) => {
   const [emailSent, setEmailSent] = useState(false);
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [initialEmail, setInitialEmail] = useState(userData.email || "");
+  const t = endingTranslations[language];
 
   useEffect(() => {
     setInitialEmail(userData.email);
@@ -112,16 +115,14 @@ const EndingPage = ({
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
-        <h2>Congratulations!</h2>
-        <p className="center-text">
-          You have arranged your journal about the jurassic age and dinosaurs and completed the <span className="highlight-title">Abstraction Test</span>. Now onto the next adventure!
-        </p>
+        <h2>{t.congrats}</h2>
+        <p className="center-text">{t.message}</p>
         <br />
 
-        <h3 className="center-text">Your Abstraction Quotient (AQ):</h3>
+        <h3 className="center-text">{t.scoreTitle}</h3>
         <div className="aq-score">{result}</div>
 
-        <label><strong>If you'd like to receive your full AQ report, please enter your E-mail:</strong></label>
+        <label><strong>{t.emailPrompt}</strong></label>
         <div className="email-input-row">
           <input
             type="email"
@@ -134,29 +135,29 @@ const EndingPage = ({
             onClick={handleSendResults}
             disabled={emailSent || !isValidEmail(userData.email)}
           >
-            Send Results
+            {t.sendResults}
           </button>
         </div>
-        {emailSent && <p className="sent-message">Your results have been sent to your email.</p>}
+        {emailSent && <p className="sent-message">{t.sentConfirmation}</p>}
 
-        <label><strong>Do you want to appear on the leaderboard as <em>{userData.pseudonym}</em>?</strong></label>
+        <label><strong>{t.leaderboardPrompt(userData.pseudonym)}</strong></label>
         <div className="button-toggle">
           <button
             className={`leaderboard-button ${userData.rankConsent === true ? "active" : ""}`}
             onClick={() => updateConsent(true)}
           >
-            Yes
+            {t.yes}
           </button>
           <button
             className={`leaderboard-button ${userData.rankConsent === false ? "active" : ""}`}
             onClick={() => updateConsent(false)}
           >
-            No
+            {t.no}
           </button>        
         </div>
 
         <div className="feedback-section">
-          <label><strong>Do you want to leave us some feedback?</strong></label>
+          <label><strong>{t.feedbackPrompt}</strong></label>
           <textarea
             name="feedback"
             value={userData.feedback}
@@ -164,20 +165,20 @@ const EndingPage = ({
             rows="4"
             disabled={feedbackSent}
           ></textarea>
-          {feedbackSent && <p className="sent-message">Thank you for your feedback!</p>}
+          {feedbackSent && <p className="sent-message">{t.feedbackSent}</p>}
           <div className="feedback-button-wrapper">
             <button
               className="feedback-button"
               onClick={handleSendFeedback}
               disabled={feedbackSent || !userData.feedback.trim()}
             >
-              Send Feedback
+              {t.sendFeedback}
             </button>
           </div>
         </div>
         
         <div className="challenge-container">
-          <h3 style={{ marginTop: "25px", marginBottom: "10px" }}>Challenge your friends!</h3>
+          <h3 style={{ marginTop: "25px", marginBottom: "10px" }}>{t.challengeFriends}</h3>
           <img src="/images/QRCode.png" alt="QR Code" style={{ width: "200px" }} />
           <p><a href={shareLink} style={{ marginBottom: "15px" }}>{shareLink.replace("https://", "")}</a></p>
         </div>
@@ -187,14 +188,14 @@ const EndingPage = ({
             className="prev-button"
             onClick={goToWelcome}
           >
-            Go to Main Page
+            {t.mainPage}
           </button>
           <button
             className="next-button"
             onClick={onSubmitFinalForm}
             disabled={userData.rankConsent !== true}
           >
-            Go to Leaderboard
+            {t.leaderboard}
           </button>
         </div>
       </motion.div>

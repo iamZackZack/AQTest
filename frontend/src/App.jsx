@@ -94,18 +94,23 @@ function App() {
 
   // Question Fetching Handler
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/questions`)
-      .then(res => {
-        // console.log("Fetched Questions:", res.data);
+    const endpoint =
+      language === "de"
+        ? `${import.meta.env.VITE_API_URL}/api/questions_de`
+        : `${import.meta.env.VITE_API_URL}/api/questions`;
+
+    axios.get(endpoint)
+      .then((res) => {
         if (res.data.length > 0 && Array.isArray(res.data[0].options)) {
           setQuestions(res.data);
           setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
+          console.log(res.data)
         } else {
-          console.error("⚠️ No questions returned or missing options field");
+          console.error("No questions returned or missing options field");
         }
       })
-      .catch(err => console.error("Error fetching questions:", err));
-  }, []);
+      .catch((err) => console.error("Error fetching questions:", err));
+  }, [language]);
 
   useEffect(() => {
     const calculateStep = (index) => {
@@ -514,6 +519,7 @@ function App() {
       {currentPage === "story" && (
         <StoryIntroPage
           selections={introSelections}
+          language={language}
           setSelections={setIntroSelections}
           goBackToWelcome={() => {
             resetApp("welcome")
@@ -601,6 +607,7 @@ function App() {
   
                   <RenderQuestion
                     question={questions[currentQuestionIndex]}
+                    language={language}
                     userAnswers={userAnswers}
                     setUserAnswers={setUserAnswers}
                     selectedAnswers={selectedAnswers}
@@ -633,20 +640,24 @@ function App() {
           </AnimatePresence>
         </motion.div>
       )}
+
       {currentPage === "demographics" && (
         <DemographicsPage
           userData={userData}
           setUserData={setUserData}
+          language={language}
           onNext={() => {
             saveTestResults(finalScore);
             setCurrentPage("end");
           }}
         />
       )}
+
       {currentPage === "end" && (
         <EndingPage
           result={finalScore}
           userData={userData}
+          language={language}
           setUserData={setUserData}
           onSubmitFinalForm={() => {
             resetApp("leaderboard");
@@ -657,8 +668,12 @@ function App() {
         />
       )}
       {currentPage === "leaderboard" && (
-        <LeaderboardPage goToWelcome={() => resetApp("welcome")} />
+        <LeaderboardPage 
+          language={language}
+          goToWelcome={() => resetApp("welcome")} 
+        />
       )}
+
     </div>
   );
 }

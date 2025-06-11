@@ -23,7 +23,8 @@ const RenderQuestion = ({
   handleEitherOrSelect,
   shuffledOptions,
   getGridClass,
-  handleAnswerClick
+  handleAnswerClick,
+  language
 }) => {
   const type = question.type;
 
@@ -71,6 +72,7 @@ const RenderQuestion = ({
             ...question,
             shuffledOptions,
           }}
+          language={language}
           userAnswers={userAnswers}
           setUserAnswers={setUserAnswers}
           handleDragEnd={handleDragEnd}
