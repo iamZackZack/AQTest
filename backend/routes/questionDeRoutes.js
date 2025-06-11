@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const QuestionDE = require("../models/QuestionDE"); // This is the only change
+const QuestionDE = require("../models/QuestionDe"); // This is the only change
 const router = express.Router();
 
 // Fetch German Questions

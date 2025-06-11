@@ -77,4 +77,4 @@ const QuestionSchema = new mongoose.Schema({
 });
 
 // 👇 force the collection name to be 'questions_de'
-module.exports = mongoose.model("QuestionDE", QuestionSchema, "questions_de");
+module.exports = mongoose.model("QuestionDe", QuestionSchema, "questions_de");
