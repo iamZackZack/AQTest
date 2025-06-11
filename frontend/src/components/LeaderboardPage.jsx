@@ -12,7 +12,22 @@ const decipherPseudonym = (encoded) => {
   }
 };
 
-const LeaderboardPage = ({ goToWelcome }) => {
+const leaderboardTranslations = {
+  en: {
+    title: "Leaderboard",
+    back: "Go to Main Page",
+    name: "Adventurer Name",
+    score: "AQ Score"
+  },
+  de: {
+    title: "Leaderboard",
+    back: "Zur Startseite",
+    name: "Abenteurername",
+    score: "AQ-Wert"
+  }
+};
+
+const LeaderboardPage = ({ goToWelcome, language }) => {
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
@@ -40,17 +55,17 @@ const LeaderboardPage = ({ goToWelcome }) => {
         transition={{ duration: 1, ease: "easeInOut" }}
       >
         <div className="leaderboard-header-container">
-          <h2>Leaderboard</h2>
+          <h2>{leaderboardTranslations[language].title}</h2>
           <button className="leaderboard-reset" onClick={goToWelcome}>
-            Go to Main Page
+            {leaderboardTranslations[language].back}
           </button>
         </div>
         <div className="leaderboard-table-container">
           <table className="leaderboard-table">
             <thead>
               <tr>
-                <th>Adventurer Name</th>
-                <th>AQ Score</th>
+                <th>{leaderboardTranslations[language].name}</th>
+                <th>{leaderboardTranslations[language].score}</th>
               </tr>
             </thead>
             <tbody>

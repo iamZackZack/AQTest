@@ -54,6 +54,21 @@ const cipherPseudonym = (name) => {
   return btoa(name);
 };
 
+const quizTranslations = {
+  en: {
+    puzzle: "Puzzle",
+    back: "← Back",
+    next: "Next →",
+    finish: "Finish"
+  },
+  de: {
+    puzzle: "Rätsel",
+    back: "← Zurück",
+    next: "Weiter →",
+    finish: "Abschließen"
+  }
+};
+
 // Main Function
 function App() {
 
@@ -104,9 +119,8 @@ function App() {
         if (res.data.length > 0 && Array.isArray(res.data[0].options)) {
           setQuestions(res.data);
           setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
-          console.log(res.data)
         } else {
-          console.error("No questions returned or missing options field");
+          // console.error("No questions returned or missing options field");
         }
       })
       .catch((err) => console.error("Error fetching questions:", err));
@@ -381,8 +395,8 @@ function App() {
 
       // 2. Start background scoring
       const { scores: row, facetPercentages } = buildScoreRow(questions, userAnswers);
-      // console.log("Original userAnswers:", userAnswers);
-      // console.log("Converted row for model:", row);
+      console.log("Original userAnswers:", userAnswers);
+      console.log("Converted row for model:", row);
 
       fetch(`${import.meta.env.VITE_API_URL}/api/score`, {
         method: "POST",
@@ -393,8 +407,8 @@ function App() {
       })
         .then((res) => res.json())
         .then((data) => {
-          // console.log("Player's EAP Score:", data.score);
-          // console.log("Logit:", data.logit);
+          console.log("Player's EAP Score:", data.score);
+          console.log("Logit:", data.logit);
           setFinalScore(data.score);           // Store to show on EndingPage
           setUserData((prev) => ({ ...prev, logit: data.logit })); // store logit for later
         })
@@ -554,8 +568,10 @@ function App() {
                 <p>Loading questions...</p>
               ) : (
                 <div className="question-container">
-                  <h3 className="puzzle-text">Puzzle {currentQuestionIndex + 1}:</h3>
-  
+                  <h3 className="puzzle-text">
+                    {quizTranslations[language].puzzle} {currentQuestionIndex + 1}:
+                  </h3>
+
                   <div className={`text-image-container ${hasImageOptions ? "with-image" : ""}`}>
                     <div className="text-content">
                       <div className="flavor-text-container">
@@ -627,11 +643,13 @@ function App() {
                   <div className="button-container">
                     {currentQuestionIndex > 0 && (
                       <button onClick={handlePrevQuestion} className="base-prev-button">
-                        ← Back
+                          {quizTranslations[language].back}
                       </button>
                     )}
                     <button onClick={handleNextQuestion} className="base-next-button">
-                      {currentQuestionIndex + 1 < questions.length ? "Next →" : "Finish"}
+                      {currentQuestionIndex + 1 < questions.length
+                        ? quizTranslations[language].next
+                        : quizTranslations[language].finish}
                     </button>
                   </div>
                 </div>

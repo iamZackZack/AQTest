@@ -37,6 +37,8 @@ export const buildScoreRow = (questions, userAnswers) => {
 
     let score = 0;
 
+    const normalize = (str) => (str || "").toLowerCase().trim();
+
     switch (type) {
       case "single-multiple-choice":
       case "grid":
@@ -44,7 +46,7 @@ export const buildScoreRow = (questions, userAnswers) => {
       case "triangle-grid": {
         const correctAnswer = Array.isArray(correct) ? correct[0] : correct;
         const user = Array.isArray(userAnswer) ? userAnswer[0] : userAnswer;
-        if (user === correctAnswer) score = 1;
+        if (normalize(user) === normalize(correctAnswer)) score = max;
         break;
       }
 
@@ -106,6 +108,13 @@ export const buildScoreRow = (questions, userAnswers) => {
 
       default:
         score = 0;
+    }
+
+    if (score !== max) {
+      console.log(`❌ QID: ${qId}`);
+      console.log(`    Type: ${type}`);
+      console.log(`    User Answer:`, userAnswer);
+      console.log(`    Correct Answer:`, correct);
     }
 
     scores.push(score);
