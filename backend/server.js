@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["https://aq-frontend.onrender.com", "http://localhost:5173", "https://aq-frontend-cjnb.onrender.com"],
+  origin: ["https://aq-frontend.onrender.com", "http://localhost:5173", "https://aq-frontend-cjnb.onrender.com", "https://abstract-test.com/"],
   methods: ["GET", "POST", "PATCH"],
   allowedHeaders: ["Content-Type"]
 }));
