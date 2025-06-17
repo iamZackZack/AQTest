@@ -73,7 +73,9 @@ const QuestionSchema = new mongoose.Schema({
     type: Number,
     default: 7
   },
-  answersNeeded: { type: Number }
+  answersNeeded: { type: Number },
+  order: {type: Number, required: true},
+  hardness: {type: Number, required: true}
 });
 
 // 👇 force the collection name to be 'questions_de'

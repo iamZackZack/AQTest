@@ -4,10 +4,9 @@ const AnswerSchema = new mongoose.Schema({
   answers: Object,          // raw answers
   correctedRow: [Number],   // array of ints sent to R
   finalScore: Number,       // percentage
-  logitScore: Number,       // logit score from R
   abstractionLevel: Number,
   pseudonym: String,
-  useName: Boolean,
+  useName: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
   demographics: {
     university: String,

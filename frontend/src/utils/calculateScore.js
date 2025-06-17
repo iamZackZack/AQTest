@@ -1,5 +1,9 @@
 export const buildScoreRow = (questions, userAnswers) => {
   const scores = [];
+  const hardness = [];
+
+  let total_score = 0;
+  let max_total_score = 0;
 
   const facetStats = {
     RA: { total: 0, correct: 0 },
@@ -22,8 +26,11 @@ export const buildScoreRow = (questions, userAnswers) => {
     const correct = question.correctAnswer;
     const max = question.maxPoint || 1;
     const type = question.type;
+    const h = question.hardness || 1;
 
-    // 🔧 Always count total per facet, even if user didn't answer
+    hardness.push(h);
+    max_total_score += max * h;
+
     if (question.abstractionAbility) {
       for (const facet of question.abstractionAbility) {
         facetStats[facet].total++;
@@ -110,16 +117,9 @@ export const buildScoreRow = (questions, userAnswers) => {
         score = 0;
     }
 
-    if (score !== max) {
-      console.log(`❌ QID: ${qId}`);
-      console.log(`    Type: ${type}`);
-      console.log(`    User Answer:`, userAnswer);
-      console.log(`    Correct Answer:`, correct);
-    }
-
     scores.push(score);
+    total_score += score * h;
 
-    // ✅ Now update correct counts
     if (score === max && question.abstractionAbility) {
       for (const facet of question.abstractionAbility) {
         facetStats[facet].correct++;
@@ -127,16 +127,22 @@ export const buildScoreRow = (questions, userAnswers) => {
     }
   }
 
-  // Derive Facet Percentages
   const facetPercentages = {};
   for (const key in facetStats) {
     const { total, correct } = facetStats[key];
     facetPercentages[key] = total > 0 ? Math.round((correct / total) * 100) : null;
-    console.log(key, total, correct)
+    console.log(key, total, correct);
   }
 
+  const normalized_score = max_total_score > 0
+    ? Math.max(Math.round((total_score / max_total_score) * 100) - 3, 0)
+    : 0;
+
   return {
-    scores,              // the row for R model
-    facetPercentages     // abstraction facet breakdown
+    scores,
+    total_score,
+    normalized_score,
+    hardness,
+    facetPercentages,
   };
 };

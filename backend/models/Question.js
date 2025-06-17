@@ -81,11 +81,15 @@ const QuestionSchema = new mongoose.Schema({
   
   hexSize: {
     type: Number,
-    default: 7, // for 7x7 grid
-  },  
+    required: function () {
+      return this.type === "hex-grid";
+    },
+  },
 
   // ✅ Answers Needed (For validation, optional)
-  answersNeeded: { type: Number, required: false }
+  answersNeeded: { type: Number, required: false },
+  order: {type: Number, required: true},
+  hardness: {type: Number, required: true}
 });
 
 module.exports = mongoose.model("Question", QuestionSchema);

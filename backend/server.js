@@ -26,7 +26,7 @@ const questionDeRoutes = require("./routes/questionDeRoutes");
 const answerRoutes = require("./routes/answerRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const mailRoutes = require("./routes/mailRoutes");
-const scoreRoutes = require("./routes/scoreRoute");
+// const scoreRoutes = require("./deprecated_R_scoring/scoreRoute");
 
 // Use Routes
 app.use("/api/questions", questionRoutes);
@@ -34,7 +34,7 @@ app.use("/api/questions_de", questionDeRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/mail", mailRoutes);
-app.use("/api/score", scoreRoutes);
+// app.use("/api/score", scoreRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {
@@ -44,8 +44,8 @@ app.get("/", (req, res) => {
 // Define port
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  //console.log(`Server running on http://localhost:${PORT}`);
 });
 
-const fs = require("fs");
-console.log("✅ Exists?", fs.existsSync("./reports/score_player.R"));
+// const fs = require("fs");
+// console.log("Exists?", fs.existsSync("./reports/score_player.R"));

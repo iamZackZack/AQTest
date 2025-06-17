@@ -42,7 +42,8 @@ router.patch("/consent", async (req, res) => {
       console.warn("No entry found for pseudonym:", pseudonym);
       return res.status(404).json({ message: "Entry not found" });
     }
-
+    console.log("✅ Updated useName for:", result.pseudonym, "->", result.useName);
+    
     res.json({ message: "Consent updated", useName: result.useName });
   } catch (err) {
     console.error("Error updating consent:", err);

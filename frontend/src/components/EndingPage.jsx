@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import endingTranslations from "../translations/endingTranslations";
 
 const EndingPage = ({
-  result,
   userData,
   setUserData,
   onSubmitFinalForm,
@@ -14,12 +13,13 @@ const EndingPage = ({
 }) => {
   const [emailSent, setEmailSent] = useState(false);
   const [feedbackSent, setFeedbackSent] = useState(false);
-  const [initialEmail, setInitialEmail] = useState(userData.email || "");
+  const [email, setEmail] = useState("");
   const t = endingTranslations[language];
 
-  useEffect(() => {
-    setInitialEmail(userData.email);
-  }, []);
+  // useEffect(() => {
+  //   setInitialEmail(userData.email);
+  // }, []);
+  
 
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -27,30 +27,32 @@ const EndingPage = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "email" && value !== initialEmail) {
-      setEmailSent(false);
+    if (name === "email") {
+      setEmail(value);
+      setEmailSent(false); // reset sent status if email changed
+    } else {
+      setUserData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSendResults = async () => {
-    if (!isValidEmail(userData.email)) {
+    if (!isValidEmail(email)) {
       alert("Please enter a valid email address.");
       return;
     }
-  
+
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          pseudonym: btoa(userData.pseudonym.trim()), // this is the ID
-          email: userData.email                        // this is where to send
+          pseudonym: userData.pseudonym.trim(),
+          email
         })
-      });      
+      });
+
       setEmailSent(true);
-      setInitialEmail(userData.email);
     } catch (err) {
       console.error("Error sending results email:", err);
     }
@@ -76,21 +78,22 @@ const EndingPage = ({
   };
 
   useEffect(() => {
-    if (userData.rankConsent === null) {
-      setUserData((prev) => ({ ...prev, rankConsent: true }));
+    if (userData.useName === undefined || userData.useName === null) {
+      setUserData((prev) => ({ ...prev, useName: true }));
     }
-  }, [userData.rankConsent]);
+  }, []);
 
   const updateConsent = async (value) => {
     if (!userData.pseudonym || userData.pseudonym.trim() === "") {
-      console.error("❌ Cannot update consent — pseudonym is empty.");
+      console.error("Cannot update consent — pseudonym is empty.");
       return;
     }
 
-    const pseudonym = btoa(userData.pseudonym.trim());
+    const pseudonym = userData.pseudonym.trim();
 
-    setUserData((prev) => ({ ...prev, rankConsent: value }));
-
+    setUserData((prev) => ({ ...prev, useName: value }));
+    
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/consent`, {
         method: "PATCH",
@@ -100,7 +103,7 @@ const EndingPage = ({
 
       const result = await response.json();
       if (!response.ok) {
-        console.warn("Consent update failed:", result.message);
+        //console.warn("Consent update failed:", result.message);
       }
     } catch (err) {
       console.error("Failed to update leaderboard consent:", err);
@@ -120,20 +123,20 @@ const EndingPage = ({
         <br />
 
         <h3 className="center-text">{t.scoreTitle}</h3>
-        <div className="aq-score">{result}</div>
+        <div className="aq-score">{userData.finalScore}</div>
 
         <label><strong>{t.emailPrompt}</strong></label>
         <div className="email-input-row">
           <input
             type="email"
             name="email"
-            value={userData.email}
+            value={email}
             onChange={handleChange}
           />
           <button
             className="email-button"
             onClick={handleSendResults}
-            disabled={emailSent || !isValidEmail(userData.email)}
+            disabled={emailSent || !isValidEmail(email)}
           >
             {t.sendResults}
           </button>
@@ -143,17 +146,17 @@ const EndingPage = ({
         <label><strong>{t.leaderboardPrompt(userData.pseudonym)}</strong></label>
         <div className="button-toggle">
           <button
-            className={`leaderboard-button ${userData.rankConsent === true ? "active" : ""}`}
+            className={`leaderboard-button ${userData.useName === true ? "active" : ""}`}
             onClick={() => updateConsent(true)}
           >
             {t.yes}
           </button>
           <button
-            className={`leaderboard-button ${userData.rankConsent === false ? "active" : ""}`}
+            className={`leaderboard-button ${userData.useName === false ? "active" : ""}`}
             onClick={() => updateConsent(false)}
           >
             {t.no}
-          </button>        
+          </button>   
         </div>
 
         <div className="feedback-section">
@@ -170,7 +173,7 @@ const EndingPage = ({
             <button
               className="feedback-button"
               onClick={handleSendFeedback}
-              disabled={feedbackSent || !userData.feedback.trim()}
+              disabled={feedbackSent}
             >
               {t.sendFeedback}
             </button>
@@ -193,7 +196,7 @@ const EndingPage = ({
           <button
             className="next-button"
             onClick={onSubmitFinalForm}
-            disabled={userData.rankConsent !== true}
+            disabled={userData.useName !== true}
           >
             {t.leaderboard}
           </button>

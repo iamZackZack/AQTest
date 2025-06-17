@@ -2,30 +2,32 @@ const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
 const { execSync } = require("child_process");
-const Answer = require("../models/Answer"); // Check path
+const Answer = require("../models/Answer");
 
 router.post("/", async (req, res) => {
   const { pseudonym, email } = req.body;
 
-  console.log("📩 /api/mail called with:");
+  console.log("/api/mail called with:");
   console.log("   → Pseudonym:", pseudonym);
   console.log("   → Email to send to:", email);
 
   if (!pseudonym || !email) {
-    console.warn("❌ Missing pseudonym or email in request body.");
+    console.warn("Missing pseudonym or email in request body.");
     return res.status(400).json({ message: "Missing pseudonym or email" });
   }
 
   try {
     // 🔍 Lookup player by pseudonym only
     const player = await Answer.findOne({ pseudonym });
+    
 
     if (!player) {
       console.warn("❌ No matching player found for pseudonym:", pseudonym);
       return res.status(404).json({ message: "Player not found" });
     }
 
-    const logit = player.logitScore ?? 0;
+    const finalScore = player.finalScore;
+    const abstractionLvl = player.abstractionLevel;
     const facetScores = [
       player.facetScores.RA ?? 0,
       player.facetScores.PR ?? 0,
@@ -35,11 +37,13 @@ router.post("/", async (req, res) => {
     ];
 
     console.log("✅ Found player data.");
-    console.log("   → Logit:", logit);
+    console.log("   → Score:", finalScore);
+    console.log("   → Level:", abstractionLvl);
     console.log("   → Facets:", facetScores);
 
+
     // 🧠 Generate the report
-    const args = [logit, ...facetScores].join(" ");
+    const args = [finalScore, abstractionLvl, ...facetScores].join(" ");
     console.log("📄 Generating report with args:", args);
     execSync(`python3 reports/generate_report.py ${args}`, { stdio: "inherit" });
 

@@ -82,7 +82,6 @@ function App() {
     pseudonym: "",
     feedback: "",
   });
-  const [finalScore, setFinalScore] = useState(null);
   const [pseudonym, setPseudonym] = useState("");
 
   // Question and Answer States
@@ -390,32 +389,7 @@ function App() {
         }));
       }
     } else {
-      // 1. Show Demographics page right away
       setCurrentPage("demographics");
-
-      // 2. Start background scoring
-      const { scores: row, facetPercentages } = buildScoreRow(questions, userAnswers);
-      console.log("Original userAnswers:", userAnswers);
-      console.log("Converted row for model:", row);
-
-      fetch(`${import.meta.env.VITE_API_URL}/api/score`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ response: row })
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Player's EAP Score:", data.score);
-          console.log("Logit:", data.logit);
-          setFinalScore(data.score);           // Store to show on EndingPage
-          setUserData((prev) => ({ ...prev, logit: data.logit })); // store logit for later
-        })
-        .catch((err) => {
-          console.error("Scoring error:", err);
-          setFinalScore(null);                 // Still allow to proceed
-        });
     }
   };
 
@@ -432,31 +406,35 @@ function App() {
   };
 
   // Handle Test Results
-  const saveTestResults = (score) => {
+  const saveTestResults = () => {
     const cipheredPseudonym = cipherPseudonym(userData.pseudonym || "");
-    const { scores: row, facetPercentages } = buildScoreRow(questions, userAnswers);
+    const { scores, total_score, normalized_score, hardness, facetPercentages } = buildScoreRow(questions, userAnswers);
+    console.log("Original userAnswers:", userAnswers);
+    console.log("Question Scores:", scores);
+    console.log("Question Hardness:", hardness);
+    console.log("Final Score:", total_score);
+    console.log("Percentage Score:", normalized_score);
+    console.log("Facet Percentages:", facetPercentages);
 
-    const mapLogitToAbstractionLevel = (logit) => {
-      if (logit < -2) return 0;
-      if (logit >= -2 && logit < -1) return 1;
-      if (logit >= -1 && logit < 0) return 2;
-      if (logit >= 0 && logit < 1) return 3;
+    const mapScoreToAbstractionLevel = (s) => {
+      if (s < 1 ) return 0;
+      if (s >= 1 && s < 14) return 1;
+      if (s >= 14 && s < 42) return 2;
+      if (s >= 42 && s < 75) return 3;
       return 4;
     };
 
-    const logit = userData.logit || 0;
-    const abstractionLvl = mapLogitToAbstractionLevel(logit);
+    const abstractionLvl = mapScoreToAbstractionLevel(total_score);
 
     const resultData = {
-      answers: userAnswers,                  // Raw answers
-      correctedRow: row.reverse(),            // R-compatible row
-      finalScore: score,                    // From R model
+      answers: userAnswers,
+      correctedRow: scores.reverse(),
+      finalScore: normalized_score,                 
       pseudonym: cipheredPseudonym,
       useName: userData.rankConsent ?? true,
-      logitScore: userData.logit || 0,
       abstractionLevel: abstractionLvl,
       timestamp: new Date().toISOString(),
-      demographics: {                       // New demographics block
+      demographics: {
         university: userData.university,
         degree: userData.degree,
         level: userData.level,
@@ -471,20 +449,19 @@ function App() {
       facetScores: facetPercentages
     };
 
+    setUserData(resultData)
     console.log(resultData);
       
     axios.post(`${import.meta.env.VITE_API_URL}/api/answers`, resultData)
-    .catch(err => console.error("Error saving result:", err));
+    .catch(err => {
+
+    }
+      // console.error("Error saving result:", err)
+    );
   };
 
   const resetApp = (goToWindow) => {
-    setUserData({
-      email: "",
-      rankConsent: null,
-      pseudonym: "",
-      feedback: "",
-    });
-    setFinalScore(null);
+    setUserData({});
     setPseudonym("");
     setUserAnswers({});
     setSelectedAnswers([]);
@@ -665,7 +642,7 @@ function App() {
           setUserData={setUserData}
           language={language}
           onNext={() => {
-            saveTestResults(finalScore);
+            saveTestResults();
             setCurrentPage("end");
           }}
         />
@@ -673,7 +650,6 @@ function App() {
 
       {currentPage === "end" && (
         <EndingPage
-          result={finalScore}
           userData={userData}
           language={language}
           setUserData={setUserData}

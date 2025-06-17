@@ -53,7 +53,28 @@ const profanityList = [
   "meth", "heroin", "cocaine", "crack", "lsd", "shrooms", "acid", "weed", "marijuana", "stoned", "high af", "druggy", "overdose",
 
   // Harassment and bullying
-  "kill yourself", "kms", "kys", "die bitch", "ugly", "worthless", "fatass", "loser", "idiot", "moron", "dumbass", "creep", "weirdo"
+  "kill yourself", "kms", "kys", "die bitch", "ugly", "worthless", "fatass", "loser", "idiot", "moron", "dumbass", "creep", "weirdo",
+
+  // German general profanity
+  "scheiße", "scheiss", "arsch", "fick", "hurensohn", "hure", "wichser", "pimmel", "schlampe", "miststück", "verdammt", "fuck you", "leck mich", "fresse", "halt die fresse",
+
+  // German racial/religious/identity slurs
+  "kanake", "judensau", "islamist", "köterrasse", "türkenpack", "zionistenschwein", "nazischwein", "kuffar", "kafir", "moslemfeind", "antisemit", "islamhasser", "jüdischenschwein", "zigeuner", "neger", "schwuchtel", "behindert", "krüppel",
+
+  // German violent/extreme language
+  "vergasen", "verbrennen", "abschlachten", "ermorden", "erschießen", "erstechen", "töten", "vergewaltigen", "terroranschlag", "sprengstoff", "massaker", "blutbad", "gaskammer", "bomben",
+
+  // German sexual/offensive expressions
+  "muschi", "votze", "dildo", "blasen", "lecken", "anal", "porno", "nackt", "bumsen", "titten", "nippel", "ejakulieren", "sperma", "schwanz", "ficken", "onanieren", "wichsen", "hoden", "sex", "handjob", "klitoris",
+
+  // German religious blasphemy/misuse
+  "gottverdammt", "scheiß jesus", "gott ist tot", "allah ist...", "gott hasst...", "fuck die bibel", "koran verbrennen", "jesus hurensohn", "heilige scheiße", "verfluchter gott",
+
+  // German hate ideologies/symbols
+  "nazis", "hitler", "ss", "reich", "holocaust", "juden raus", "ausländer raus", "ethnische säuberung", "weißmacht", "arisch", "drittes reich", "gas die juden", "heil hitler", "88", "sieg heil",
+
+  // German bullying/harassment
+  "töte dich", "selbstmord", "du bist hässlich", "wertlos", "fette sau", "idiot", "spast", "opfer", "psycho", "creep", "perversling"
 ];
 
 const isClean = (name) => {

@@ -1,22 +1,18 @@
 # Start from rocker with R 4.3.2
-FROM rocker/r-base:4.3.2
+FROM node:20-bullseye
 
 # Install system packages
 RUN apt-get update && apt-get install -y \
     sudo \
     git \
     curl \
-    build-essential \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    libxml2-dev \
     python3 \
     python3-pip \
     nodejs \
     npm
 
 # Install R packages
-RUN R -e "install.packages(c('mirt', 'jsonlite'), repos='https://cloud.r-project.org')"
+# RUN R -e "install.packages(c('mirt', 'jsonlite'), repos='https://cloud.r-project.org')"
 
 # Install Python packages
 RUN pip3 install --break-system-packages pandas matplotlib PyMuPDF
@@ -31,8 +27,8 @@ COPY backend/models /app/models
 COPY backend/reports /app/reports
 
 # Copy required data files
-COPY backend/model.rds /app/model.rds
-COPY backend/dX.csv /app/dX.csv
+# COPY backend/model.rds /app/model.rds
+# COPY backend/dX.csv /app/dX.csv
 
 # Copy dependency files
 COPY backend/package*.json /app/
