@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
     const questions = await Question.find().sort({ order: 1 });
     res.json(questions);
   } catch (err) {
-    console.error("❌ Error fetching questions from DB:", err);
+    // console.error("❌ Error fetching questions from DB:", err);
     res.status(500).json({ message: err.message });
   }
 });

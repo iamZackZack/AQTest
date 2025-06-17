@@ -409,12 +409,12 @@ function App() {
   const saveTestResults = () => {
     const cipheredPseudonym = cipherPseudonym(userData.pseudonym || "");
     const { scores, total_score, normalized_score, hardness, facetPercentages } = buildScoreRow(questions, userAnswers);
-    console.log("Original userAnswers:", userAnswers);
-    console.log("Question Scores:", scores);
-    console.log("Question Hardness:", hardness);
-    console.log("Final Score:", total_score);
-    console.log("Percentage Score:", normalized_score);
-    console.log("Facet Percentages:", facetPercentages);
+    // console.log("Original userAnswers:", userAnswers);
+    // console.log("Question Scores:", scores);
+    // console.log("Question Hardness:", hardness);
+    // console.log("Final Score:", total_score);
+    // console.log("Percentage Score:", normalized_score);
+    // console.log("Facet Percentages:", facetPercentages);
 
     const mapScoreToAbstractionLevel = (s) => {
       if (s < 1 ) return 0;
@@ -450,7 +450,7 @@ function App() {
     };
 
     setUserData(resultData)
-    console.log(resultData);
+    // console.log(resultData);
       
     axios.post(`${import.meta.env.VITE_API_URL}/api/answers`, resultData)
     .catch(err => {

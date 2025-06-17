@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 // Updating Player Leaderboard Display Consent
 router.patch("/consent", async (req, res) => {
   const { pseudonym, useName } = req.body;
-  console.log("PATCH /consent called with:", { pseudonym, useName });
+  // console.log("PATCH /consent called with:", { pseudonym, useName });
 
   try {
     const result = await Answer.findOneAndUpdate(
@@ -42,7 +42,7 @@ router.patch("/consent", async (req, res) => {
       console.warn("No entry found for pseudonym:", pseudonym);
       return res.status(404).json({ message: "Entry not found" });
     }
-    console.log("✅ Updated useName for:", result.pseudonym, "->", result.useName);
+    // console.log("✅ Updated useName for:", result.pseudonym, "->", result.useName);
     
     res.json({ message: "Consent updated", useName: result.useName });
   } catch (err) {

@@ -131,7 +131,7 @@ export const buildScoreRow = (questions, userAnswers) => {
   for (const key in facetStats) {
     const { total, correct } = facetStats[key];
     facetPercentages[key] = total > 0 ? Math.round((correct / total) * 100) : null;
-    console.log(key, total, correct);
+    // console.log(key, total, correct);
   }
 
   const normalized_score = max_total_score > 0

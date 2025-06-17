@@ -14,10 +14,10 @@ app.use(cors({
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to MongoDB Atlas");
+    // console.log("Connected to MongoDB Atlas");
   })
   .catch(err => {
-    console.error("MongoDB connection error:", err);
+    // console.error("MongoDB connection error:", err);
   });
 
 // Import Routes
