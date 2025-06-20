@@ -1,3 +1,5 @@
+// Constains the english and german text for the Ending page.
+
 const endingTranslations = {
   en: {
     congrats: "Congratulations!",

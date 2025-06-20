@@ -1,10 +1,11 @@
 export const buildScoreRow = (questions, userAnswers) => {
-  const scores = [];
-  const hardness = [];
+  const scores = [];    // Stores per-question scores
+  const hardness = [];  // Tracks hardness values per question
 
-  let total_score = 0;
-  let max_total_score = 0;
+  let total_score = 0;     // Sum of weighted scores
+  let max_total_score = 0; // Sum of max possible weighted scores
 
+  // Initialize abstraction facet statistics
   const facetStats = {
     RA: { total: 0, correct: 0 },
     PR: { total: 0, correct: 0 },
@@ -13,13 +14,16 @@ export const buildScoreRow = (questions, userAnswers) => {
     LC: { total: 0, correct: 0 },
   };
 
+  // Normalize and clean string for text comparison
   const cleanString = (str) =>
     str.toLowerCase().replace(/[^a-z0-9]/gi, "").trim();
 
+  // Compare two arrays regardless of order
   const arraysMatch = (arr1, arr2) => {
     return [...arr1].sort().join(",") === [...arr2].sort().join(",");
   };
 
+  // Loop through each question to calculate score
   for (const question of questions) {
     const qId = question._id;
     const userAnswer = userAnswers[qId];
@@ -31,12 +35,14 @@ export const buildScoreRow = (questions, userAnswers) => {
     hardness.push(h);
     max_total_score += max * h;
 
+    // Track facets for abstraction-based scoring
     if (question.abstractionAbility) {
       for (const facet of question.abstractionAbility) {
         facetStats[facet].total++;
       }
     }
 
+    // If answer or correct solution is missing, assign score 0
     if (!userAnswer || !correct) {
       scores.push(0);
       continue;
@@ -46,6 +52,7 @@ export const buildScoreRow = (questions, userAnswers) => {
 
     const normalize = (str) => (str || "").toLowerCase().trim();
 
+    // Scoring logic based on question type
     switch (type) {
       case "single-multiple-choice":
       case "grid":
@@ -120,6 +127,7 @@ export const buildScoreRow = (questions, userAnswers) => {
     scores.push(score);
     total_score += score * h;
 
+    // Update correct facet counts if max score was achieved
     if (score === max && question.abstractionAbility) {
       for (const facet of question.abstractionAbility) {
         facetStats[facet].correct++;
@@ -127,17 +135,19 @@ export const buildScoreRow = (questions, userAnswers) => {
     }
   }
 
+  // Calculate percentage for each abstraction facet
   const facetPercentages = {};
   for (const key in facetStats) {
     const { total, correct } = facetStats[key];
     facetPercentages[key] = total > 0 ? Math.round((correct / total) * 100) : null;
-    // console.log(key, total, correct);
   }
 
+  // Normalize total score to a 0–100 scale and subtract 3 points as penalty
   const normalized_score = max_total_score > 0
     ? Math.max(Math.round((total_score / max_total_score) * 100) - 3, 0)
     : 0;
 
+  // Return detailed score object
   return {
     scores,
     total_score,

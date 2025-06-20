@@ -1,3 +1,5 @@
+/* Styling for the basic parts of the application */
+
 body {
   display: flex;
   justify-content: center;
@@ -21,7 +23,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* optional for parallax-like effect */
+  background-attachment: fixed;
 }
 
 .bg-1 {
@@ -148,13 +150,13 @@ body {
 
 .progress-bar-wrapper {
   width: 100%;
-  max-width: 75%; /* Match the .book width */
+  max-width: 75%;
   height: 10px;
   background-color: #ddd;
   border-radius: 5px;
   overflow: hidden;
   position: absolute;
-  top: 20px; /* Push down from top inside the book-container */
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;

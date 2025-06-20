@@ -1,3 +1,5 @@
+// Constains the english and german text for the Demographics page.
+
 const demographicsTranslations = {
   en: {
     loading: "We are calculating your Abstraction Quotient. Meanwhile, please fill in some details about yourself for demographics purposes.",

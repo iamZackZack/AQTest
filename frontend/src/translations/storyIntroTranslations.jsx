@@ -1,4 +1,5 @@
-// translations/storyIntroTranslations.jsx
+// Constains the english and german text for the Story Introduction page.
+
 const storyIntroTranslations = {
   en: {
     heading: <>Welcome to <span className="highlight-title">Jurassic Land</span>!</>,

@@ -1,3 +1,5 @@
+// Constains the english and german text for the Welcome page.
+
 const welcomeTranslations = {
   en: {
     title: <>Welcome to the <span className="highlight-title">Abstraction Test</span>!</>,
