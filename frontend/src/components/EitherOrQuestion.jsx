@@ -1,11 +1,14 @@
 import React from "react";
 import "./styles/either-or.css";
 
+// Renders an "either-or" question where users choose between two options for each item.
+// Supports both text and image-based choices.
 const EitherOrQuestion = ({ question, userAnswers, setUserAnswers }) => {
   const questionId = question._id;
   const eitherOrItems = question.options[0].items;
   const selectedAnswers = userAnswers[questionId] || {};
 
+  // Handles selection of a choice (A or B) for a given item
   const handleSelect = (itemText, choice) => {
     setUserAnswers((prev) => ({
       ...prev,

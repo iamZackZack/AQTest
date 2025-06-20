@@ -11,11 +11,15 @@ const MultipleChoiceQuestion = ({
 }) => {
   const questionId = question._id;
 
+  // Handles a user's selection or deselection of an option
   const handleClick = (optionValue) => {
     const isMulti = question.type === "multiple-multiple-choice";
 
+    // Update stored answers
     setUserAnswers((prev) => {
       const prevAnswers = prev[questionId] || [];
+
+      // Toggle selection if multi, otherwise override
       const newAnswers = isMulti
         ? prevAnswers.includes(optionValue)
           ? prevAnswers.filter((ans) => ans !== optionValue)
@@ -25,6 +29,7 @@ const MultipleChoiceQuestion = ({
       return { ...prev, [questionId]: newAnswers };
     });
 
+    // Also update visual state (if separate from userAnswers)
     setSelectedAnswers((prevSelected) => {
       return isMulti
         ? prevSelected.includes(optionValue)
@@ -45,6 +50,7 @@ const MultipleChoiceQuestion = ({
             onClick={() => handleClick(option.value)}
             className={`option ${isSelected ? "selected" : ""}`}
           >
+            {/* Render image if option is an image, fallback to text otherwise */}
             {option.type === "image" ? (
               <img
                 src={option.value}

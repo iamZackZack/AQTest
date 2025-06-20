@@ -21,6 +21,7 @@ const instructions = [
   },
 ];
 
+// List of disallowed words used for input validation
 const profanityList = [
   // General profanity
   "fuck", "shit", "bitch", "asshole", "dick", "piss", "crap", "slut", "bastard", "damn", "bloody", "hell",
@@ -77,11 +78,14 @@ const profanityList = [
   "töte dich", "selbstmord", "du bist hässlich", "wertlos", "fette sau", "idiot", "spast", "opfer", "psycho", "creep", "perversling"
 ];
 
+// Checks if a given name contains any word from the profanity list
 const isClean = (name) => {
   const lower = name.toLowerCase();
   return !profanityList.some((badWord) => lower.includes(badWord));
 };
 
+// The intro screen shown before starting the quiz.
+// Shows instructions, collects pseudonym, and tracks user readiness.
 const StoryIntroPage = ({ selections, setSelections, onStartQuiz, pseudonym, setPseudonym, goBackToWelcome, language }) => {
   const [error, setError] = React.useState("");
   const t = storyIntroTranslations[language];
@@ -103,6 +107,7 @@ const StoryIntroPage = ({ selections, setSelections, onStartQuiz, pseudonym, set
         <h2>{t.heading}</h2>
         <p>{t.intro}</p>
 
+        {/* Pseudonym input with profanity validation */}
         <label>{t.nameLabel}</label>
         <input
           type="text"
@@ -116,8 +121,8 @@ const StoryIntroPage = ({ selections, setSelections, onStartQuiz, pseudonym, set
         />
         {error && <p className="error-message">{error}</p>}
 
+        {/* Instruction cards */}
         <p>{t.selectionIntro}</p>
-
         <div className="instruction-boxes">
           {t.instructions.map((text, i) => (
             <div
@@ -135,6 +140,7 @@ const StoryIntroPage = ({ selections, setSelections, onStartQuiz, pseudonym, set
           ))}
         </div>
 
+        {/* Navigation buttons */}
         <div className="button-container">
           <button className="story-prev-button" onClick={goBackToWelcome}>
             {t.back}

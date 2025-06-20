@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+// PageWrapper provides a smooth animated transition when mounting/unmounting pages
 const PageWrapper = ({ children }) => {
   return (
     <motion.div

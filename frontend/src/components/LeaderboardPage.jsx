@@ -1,9 +1,9 @@
-// src/components/LeaderboardPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import "./styles/leaderboard.css";
 
+// Utility: Decodes a Base64-encoded pseudonym for display
 const decipherPseudonym = (encoded) => {
   try {
     return atob(encoded);
@@ -12,6 +12,7 @@ const decipherPseudonym = (encoded) => {
   }
 };
 
+// Translation strings
 const leaderboardTranslations = {
   en: {
     title: "Leaderboard",
@@ -27,10 +28,12 @@ const leaderboardTranslations = {
   }
 };
 
+// Shows the sorted list of user scores if they opted in (useName: true)
 const LeaderboardPage = ({ goToWelcome, language }) => {
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
+    // Fetch leaderboard entries from backend API
     axios.get(`${import.meta.env.VITE_API_URL}/api/answers`)
       .then((res) => {
         const filtered = res.data
@@ -54,12 +57,15 @@ const LeaderboardPage = ({ goToWelcome, language }) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
+        {/* Header with title and "back to welcome" button */}
         <div className="leaderboard-header-container">
           <h2>{leaderboardTranslations[language].title}</h2>
           <button className="leaderboard-reset" onClick={goToWelcome}>
             {leaderboardTranslations[language].back}
           </button>
         </div>
+        
+        {/* Table of leaderboard results */}
         <div className="leaderboard-table-container">
           <table className="leaderboard-table">
             <thead>

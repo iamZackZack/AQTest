@@ -15,6 +15,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import "./styles/drag-order.css";
 
+// SortableItem component renders each draggable item in the list.
+// Supports both text and image options.
 const SortableItem = ({ id, questionId }) => {
   const {
     attributes,
@@ -50,15 +52,18 @@ const SortableItem = ({ id, questionId }) => {
   );
 };
 
+// DragOrderQuestion renders a vertical drag-and-drop interface for reordering items.
+// Supports optional labeling (e.g. most detailed to simplest) and numbered lists.
 const DragOrderQuestion = ({ question, userAnswers, setUserAnswers, language }) => {
   const questionId = question._id;
-  const isNumberedList = question.questionID === "Q119";
-  const isAbstractScale = question.questionID === "Q104";
+  const isNumberedList = question.questionID === "Q119";   // Special numbered style
+  const isAbstractScale = question.questionID === "Q104";  // Label: Most Detailed → Simplest
 
-  // ✅ Prefer shuffled options if available
+  // Default order uses shuffled options if available, otherwise uses static order
   const defaultOrder = (question.shuffledOptions || question.options).map((o) => o.value);
   const [items, setItems] = useState(userAnswers[questionId] || defaultOrder);
 
+  // Sync internal state with external answer state or fall back to default
   useEffect(() => {
     const defaultOrder = (question.shuffledOptions || question.options).map((o) => o.value);
   
@@ -70,8 +75,10 @@ const DragOrderQuestion = ({ question, userAnswers, setUserAnswers, language }) 
     }
   }, [questionId, userAnswers, question.shuffledOptions, question.options]);
   
+  // Set up pointer-based drag sensor
   const sensors = useSensors(useSensor(PointerSensor));
 
+  // Handles reordering logic after an item is dropped
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -102,6 +109,7 @@ const DragOrderQuestion = ({ question, userAnswers, setUserAnswers, language }) 
           </div>
         )}
 
+        {/* Drag-and-drop context and sortable list */}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

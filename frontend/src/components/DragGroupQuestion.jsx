@@ -2,9 +2,13 @@ import React from "react";
 import "./styles/drag-group.css";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
+// Renders a "drag-group" style question where users assign items to two or more criteria groups.
+// Uses @hello-pangea/dnd for drag-and-drop behavior.
 const DragGroupQuestion = ({ question, userAnswers, setUserAnswers, handleDragEnd }) => {
   const questionId = question._id;
   const groupCount = question.groupCount || 2;
+
+  // Validate and initialize group structure
   const isValidGroupArray =
     Array.isArray(userAnswers[questionId]) &&
     userAnswers[questionId].length === groupCount &&
@@ -13,6 +17,8 @@ const DragGroupQuestion = ({ question, userAnswers, setUserAnswers, handleDragEn
     ? userAnswers[questionId]
     : Array.from({ length: groupCount }, () => []);
   const assignedItems = new Set(initialGroups.flat());
+
+  // Identify which items have not been grouped yet
   const unassignedOptions = question.options
   .map((o) => o.value)
   .filter((value) => !assignedItems.has(value));
@@ -20,6 +26,8 @@ const DragGroupQuestion = ({ question, userAnswers, setUserAnswers, handleDragEn
   return (
     <div className="drag-group-container">
       <DragDropContext onDragEnd={handleDragEnd}>
+
+        {/* Unassigned draggable options */}
         <Droppable droppableId="options" direction="horizontal">
           {(provided) => (
             <div
@@ -46,6 +54,7 @@ const DragGroupQuestion = ({ question, userAnswers, setUserAnswers, handleDragEn
           )}
         </Droppable>
 
+        {/* Labeled group drop targets */}
         <div className="drag-group-layout">
           <div className="criteria-label-top">
             {navigator.language.startsWith("de") ? "Kriterium 1" : "Criteria 1"}

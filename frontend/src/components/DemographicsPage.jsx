@@ -3,13 +3,17 @@ import "./styles/demographics-page.css";
 import demographicsTranslations from "../translations/demographicsTranslations";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Renders the demographics form shown after the quiz.
+// Collects educational background, GPA, age, language level, and more.
+// Translations and validation logic are applied dynamically based on selected language.
 const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
   const [university, setUniversity] = useState("");
   const [otherUni, setOtherUni] = useState("");
   const [rating, setRating] = useState(userData.rating || null);
   const [errors, setErrors] = useState({});
-  const t = demographicsTranslations[language];
+  const t = demographicsTranslations[language];  // Translations for selected language
 
+  // Validate number fields with specific bounds
   const validateField = (name, value) => {
     const num = Number(value);
     if (name === "educationYears" && (num < 1 || num > 10)) return t.errors.educationYears;
@@ -18,18 +22,21 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
     return "";
   };
 
+  // Generic input change handler with validation
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
   };
 
+  // University dropdown handler (handles "Other" case)
   const handleUniversityChange = (e) => {
     const value = e.target.value;
     setUniversity(value);
     setUserData((prev) => ({ ...prev, university: value === "Other" ? otherUni : value }));
   };
 
+  // Star rating input for quiz experience
   const handleRatingClick = (val) => {
     setRating(val);
     setUserData((prev) => ({ ...prev, rating: val }));
@@ -43,11 +50,13 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
+       {/* Loading gear and prompt */}
         <div className="loading-section">
           <img src="/images/gears.gif" alt="Loading..." style={{ width: "120px", height: "60px" }} />
           <p>{t.loading}</p>
         </div>
 
+        {/* University field (with Other input override) */}
         <label>{t.university}</label>
         <select value={university} onChange={handleUniversityChange}>
           <option value="">--Select--</option>
@@ -67,6 +76,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
           />
         )}
 
+        {/* Degree input */}
         <label>{t.degree}</label>
         <input type="text" name="degree" value={userData.degree || ""} onChange={handleChange} />
 
@@ -78,6 +88,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
           ))}
         </select>
 
+        {/* Subject field dropdown */}
         <label>{t.subject}</label>
         <select name="subjectField" value={userData.subjectField || ""} onChange={handleChange}>
           <option value="">--Select--</option>
@@ -86,6 +97,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
           ))}
         </select>
 
+        {/* Star rating for user satisfaction */}
         <label>{t.rating}</label>
         <div className="star-rating">
           {[...Array(10)].map((_, i) => (
@@ -97,6 +109,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
           ))}
         </div>
 
+        {/* Education years with validation */}
         <label>{t.years}</label>
         <input
           type="text"
@@ -109,6 +122,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
         />
         {errors.educationYears && <p className="error-message">{errors.educationYears}</p>}
 
+        {/* GPA input with validation */}
         <label>{t.gpa}</label>
         <input
           type="text"
@@ -121,6 +135,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
         />
         {errors.gpa && <p className="error-message">{errors.gpa}</p>}
 
+        {/* Gender dropdown */}
         <label>{t.gender}</label>
         <select name="gender" value={userData.gender || ""} onChange={handleChange}>
           <option value="">--Select--</option>
@@ -129,6 +144,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
           ))}
         </select>
 
+        {/* Age input with integer validation */}
         <label>{t.age}</label>
         <input
           type="text"
@@ -141,6 +157,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
         />
         {errors.age && <p className="error-message">{errors.age}</p>}
 
+        {/* Language proficiency level dropdown */}
         <label>{t.language}</label>
         <select name="languageSkill" value={userData.languageSkill || ""} onChange={handleChange}>
           <option value="">--Select--</option>
@@ -152,6 +169,7 @@ const DemographicsPage = ({ userData, setUserData, onNext, language }) => {
           <option value="C2">C2</option>
         </select>
 
+        {/* Submit button */}
         <div className="button-container right-align">
           <button onClick={onNext}>{t.continue}</button>
         </div>

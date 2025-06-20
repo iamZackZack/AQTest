@@ -1,4 +1,6 @@
 import React from "react";
+
+// Import all supported question components
 import GridQuestion from "./GridQuestion";
 import TriangleGridQuestion from "./TriangleGridQuestion";
 import DragGroupQuestion from "./DragGroupQuestion";
@@ -8,6 +10,8 @@ import EitherOrQuestion from "./EitherOrQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import HexGridQuestion from "./HexGridQuestion";
 
+// This component acts as a centralized renderer for all question types.
+// It receives the current question and dispatches the correct component based on question.type.
 const RenderQuestion = ({
   question,
   userAnswers,
@@ -28,6 +32,7 @@ const RenderQuestion = ({
 }) => {
   const type = question.type;
 
+  // Render the appropriate question type based on its `type` field
   switch (type) {
     case "grid":
       return (
@@ -95,6 +100,8 @@ const RenderQuestion = ({
           setUserAnswers={setUserAnswers}
         />
       );
+
+    // Default to multiple choice if type is unknown or undefined
     default:
       return (
         <MultipleChoiceQuestion
@@ -105,7 +112,7 @@ const RenderQuestion = ({
           setSelectedAnswers={setSelectedAnswers}
           shuffledOptions={shuffledOptions}
           getGridClass={getGridClass}
-          handleAnswerClick={handleAnswerClick} // or correct handler if renamed
+          handleAnswerClick={handleAnswerClick}
         />
       );
   }

@@ -3,6 +3,13 @@ import "./styles/ending-page.css";
 import { motion, AnimatePresence } from "framer-motion";
 import endingTranslations from "../translations/endingTranslations";
 
+// Renders the final screen after quiz completion.
+// Allows the user to:
+// - View final score
+// - Email themselves the result
+// - Consent to leaderboard inclusion
+// - Submit feedback
+// - Share the quiz link
 const EndingPage = ({
   userData,
   setUserData,
@@ -14,17 +21,14 @@ const EndingPage = ({
   const [emailSent, setEmailSent] = useState(false);
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [email, setEmail] = useState("");
-  const t = endingTranslations[language];
+  const t = endingTranslations[language];  
 
-  // useEffect(() => {
-  //   setInitialEmail(userData.email);
-  // }, []);
-  
-
+  // Validates email format
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  // Handles input changes for both feedback and email fields
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -36,6 +40,7 @@ const EndingPage = ({
     }
   };
 
+  // Sends results to the entered email via backend API
   const handleSendResults = async () => {
     if (!isValidEmail(email)) {
       alert("Please enter a valid email address.");
@@ -58,6 +63,7 @@ const EndingPage = ({
     }
   };
 
+  // Sends user feedback to the backend
   const handleSendFeedback = async () => {
     try {
       const payload = {
@@ -77,12 +83,14 @@ const EndingPage = ({
     }
   };
 
+  // Set default consent value if missing
   useEffect(() => {
     if (userData.useName === undefined || userData.useName === null) {
       setUserData((prev) => ({ ...prev, useName: true }));
     }
   }, []);
 
+  // Updates leaderboard consent (Yes/No) on the server
   const updateConsent = async (value) => {
     if (!userData.pseudonym || userData.pseudonym.trim() === "") {
       console.error("Cannot update consent — pseudonym is empty.");
@@ -92,7 +100,6 @@ const EndingPage = ({
     const pseudonym = userData.pseudonym.trim();
 
     setUserData((prev) => ({ ...prev, useName: value }));
-    
     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/consent`, {
@@ -118,6 +125,7 @@ const EndingPage = ({
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
+        {/* Congratulations and score */}
         <h2>{t.congrats}</h2>
         <p className="center-text">{t.message}</p>
         <br />
@@ -125,6 +133,7 @@ const EndingPage = ({
         <h3 className="center-text">{t.scoreTitle}</h3>
         <div className="aq-score">{userData.finalScore}</div>
 
+        {/* Email input to send results */}
         <label><strong>{t.emailPrompt}</strong></label>
         <div className="email-input-row">
           <input
@@ -143,7 +152,16 @@ const EndingPage = ({
         </div>
         {emailSent && <p className="sent-message">{t.sentConfirmation}</p>}
 
-        <label><strong>{t.leaderboardPrompt(userData.pseudonym)}</strong></label>
+        {/* Leaderboard consent (Yes/No) */}
+        {t.leaderboardPrompt(
+          (() => {
+            try {
+              return atob(userData.pseudonym || "");
+            } catch {
+              return "[invalid pseudonym]";
+            }
+          })()
+        )}
         <div className="button-toggle">
           <button
             className={`leaderboard-button ${userData.useName === true ? "active" : ""}`}
@@ -159,6 +177,7 @@ const EndingPage = ({
           </button>   
         </div>
 
+        {/* Feedback textarea */}
         <div className="feedback-section">
           <label><strong>{t.feedbackPrompt}</strong></label>
           <textarea
@@ -180,12 +199,14 @@ const EndingPage = ({
           </div>
         </div>
         
+        {/* QR code and share link */}
         <div className="challenge-container">
           <h3 style={{ marginTop: "25px", marginBottom: "10px" }}>{t.challengeFriends}</h3>
           <img src="/images/QRCode.png" alt="QR Code" style={{ width: "200px" }} />
           <p><a href={shareLink} style={{ marginBottom: "15px" }}>{shareLink.replace("https://", "")}</a></p>
         </div>
 
+        {/* Navigation buttons */}
         <div className="button-container">
           <button
             className="prev-button"
