@@ -1,8 +1,11 @@
+// This is the Schema for the Questions in English that are retrieved from MongoDB. It essentially contains all the necessary 
+// fields(keys) and the value types.
+
 const mongoose = require("mongoose");
 
 const QuestionSchema = new mongoose.Schema({
-  questionText: { type: String, required: true },
-  flavorText: { type: String },
+  questionText: { type: String, required: true },  // Question text
+  flavorText: { type: String },  // Flavor text
 
   options: [
     {
@@ -13,14 +16,14 @@ const QuestionSchema = new mongoose.Schema({
           itemText: { type: String, required: function() { return this.type === "either-or"; } },
           choiceA: { type: String, required: false },
           choiceB: { type: String, required: false },
-          choiceAImage: { type: String, required: false }, // ✅ New: Optional Image for Choice A
-          choiceBImage: { type: String, required: false }  // ✅ New: Optional Image for Choice B
+          choiceAImage: { type: String, required: false },
+          choiceBImage: { type: String, required: false }
         }
       ]
     }
   ],
 
-  // ✅ Grid-Specific Fields
+  // Grid(Normal, Triangle & Hex) Specific Fields
   gridSize: { type: Number, enum: [5, 7], required: function() { return this.type === "grid"; } },
   triangleGridRows: { type: Number, required: function() { return this.type === "triangle-grid"; } },
   startPosition: { 
@@ -35,8 +38,20 @@ const QuestionSchema = new mongoose.Schema({
       return this.type === "grid" || this.type === "triangle-grid"; 
     } 
   },
+  hexStartPosition: {
+    type: String, // Example: "F4"
+    required: function () {
+      return this.type === "hex-grid";
+    },
+  },
+  hexSize: {
+    type: Number,
+    required: function () {
+      return this.type === "hex-grid";
+    },
+  },
 
-  // ✅ qImage-Specific Field
+  // Questions w/ Image Specific Field
   qImage: { 
     type: String, 
     required: function() { 
@@ -46,7 +61,7 @@ const QuestionSchema = new mongoose.Schema({
   qImageWidth: { type: Number, required: false },
   qImageHeight: { type: Number, required: false },
 
-  // ✅ Correct Answer (Array for different question types)
+  // orrect Answer (Array for different question types)
   correctAnswer: {
     type: [mongoose.Schema.Types.Mixed], // Accepts flat or nested arrays
     required: function () {
@@ -65,28 +80,14 @@ const QuestionSchema = new mongoose.Schema({
     default: []
   },
 
-  // ✅ Question Type
+  // Question Type
   type: { 
     type: String, 
     enum: ["single-multiple-choice", "multiple-multiple-choice", "grid", "triangle-grid", "drag-group", "drag-order", "either-or", "text-entry", "hex-grid"], 
     required: true 
   },
 
-  hexStartPosition: {
-    type: String, // Example: "F4"
-    required: function () {
-      return this.type === "hex-grid";
-    },
-  },
-  
-  hexSize: {
-    type: Number,
-    required: function () {
-      return this.type === "hex-grid";
-    },
-  },
-
-  // ✅ Answers Needed (For validation, optional)
+  // Fields for Validation, Scoring & Order
   answersNeeded: { type: Number, required: false },
   order: {type: Number, required: true},
   hardness: {type: Number, required: true}

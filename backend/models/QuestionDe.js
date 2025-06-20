@@ -1,3 +1,6 @@
+// This is the Schema for the Questions in German that are retrieved from MongoDB. It essentially contains all the necessary 
+// fields(keys) and the value types. They are practically the same as the Question.js schema.
+
 const mongoose = require("mongoose");
 
 const QuestionSchema = new mongoose.Schema({

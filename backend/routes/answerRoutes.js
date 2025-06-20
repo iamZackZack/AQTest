@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
     const savedAnswer = await answer.save();
     res.status(201).json(savedAnswer);
   } catch (err) {
-    console.error("❌ Error saving answer:", err);
+    console.error("Error saving answer:", err);
     res.status(400).json({ message: err.message });
   }
 });
@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     const answers = await Answer.find();
     res.status(200).json(answers);
   } catch (err) {
-    console.error("❌ Error fetching answers:", err);
+    console.error("Error fetching answers:", err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -29,8 +29,7 @@ router.get("/", async (req, res) => {
 // Updating Player Leaderboard Display Consent
 router.patch("/consent", async (req, res) => {
   const { pseudonym, useName } = req.body;
-  // console.log("PATCH /consent called with:", { pseudonym, useName });
-
+  
   try {
     const result = await Answer.findOneAndUpdate(
       { pseudonym },
@@ -42,7 +41,6 @@ router.patch("/consent", async (req, res) => {
       console.warn("No entry found for pseudonym:", pseudonym);
       return res.status(404).json({ message: "Entry not found" });
     }
-    // console.log("✅ Updated useName for:", result.pseudonym, "->", result.useName);
     
     res.json({ message: "Consent updated", useName: result.useName });
   } catch (err) {

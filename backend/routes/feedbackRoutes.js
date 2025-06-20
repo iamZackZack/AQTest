@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Feedback = require("../models/Feedback");
 
+// Save new feedback
 router.post("/", async (req, res) => {
   const { feedback, timestamp } = req.body;
 

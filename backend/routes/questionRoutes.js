@@ -3,18 +3,17 @@ const mongoose = require("mongoose");
 const Question = require("../models/Question");
 const router = express.Router();
 
-// Fetch English Questions
+// Route to fetch english questions
 router.get("/", async (req, res) => {
   try {
     const questions = await Question.find().sort({ order: 1 });
     res.json(questions);
   } catch (err) {
-    // console.error("❌ Error fetching questions from DB:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
-// Add New Question
+// Route to add english questions (unused)
 router.post("/", async (req, res) => {
   const question = new Question(req.body);
   try {

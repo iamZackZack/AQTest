@@ -1,3 +1,6 @@
+// This is the Schema for the Answers that are sent and stored in MongoDB. It essentially contains all the necessary 
+// fields(keys) and the value types.
+
 const mongoose = require("mongoose");
 
 const AnswerSchema = new mongoose.Schema({
