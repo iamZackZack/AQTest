@@ -23,6 +23,15 @@ const EndingPage = ({
   const [email, setEmail] = useState("");
   const t = endingTranslations[language];  
 
+  // Decodes the Pseudonym for display
+  const decodedPseudonym = (() => {
+    try {
+      return atob(userData.pseudonym || "");
+    } catch {
+      return "[invalid pseudonym]";
+    }
+  })();
+
   // Validates email format
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -153,15 +162,7 @@ const EndingPage = ({
         {emailSent && <p className="sent-message">{t.sentConfirmation}</p>}
 
         {/* Leaderboard consent (Yes/No) */}
-        {t.leaderboardPrompt(
-          (() => {
-            try {
-              return atob(userData.pseudonym || "");
-            } catch {
-              return "[invalid pseudonym]";
-            }
-          })()
-        )}
+        {t.leaderboardPrompt(decodedPseudonym)}
         <div className="button-toggle">
           <button
             className={`leaderboard-button ${userData.useName === true ? "active" : ""}`}
