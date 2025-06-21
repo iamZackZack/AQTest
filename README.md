@@ -1,19 +1,19 @@
-# 🧠 Abstract Quotient (AQ) Test
+# Abstract Quotient (AQ) Test
 
 **A Web-based Psychometric Test to Measure Abstraction Capabilities in STEM Education**
 
 ---
 
-## 🔍 Overview
+## Overview
 
 The **Abstract Quotient (AQ)** Test is a research-driven cognitive puzzle experience designed to assess a user's ability to think abstractly — a skill critical for success in STEM fields. Inspired by traditional IQ testing but modernized through interactivity and game design, AQ delivers a unique, engaging web-based test aimed at identifying abstraction potential in learners.
 
-> 🔗 **Live Demo:** [aq-frontend-cjnb.onrender.com](https://aq-frontend-cjnb.onrender.com)  
-> 📚 **Learn more:** [abstract-test.com](https://abstract-test.com)
+> **Live Demo:** [aq-frontend-cjnb.onrender.com](https://aq-frontend-cjnb.onrender.com)  
+> **Learn more:** [abstract-test.com](https://abstract-test.com)
 
 ---
 
-## 🧩 Features
+## Features
 
 - **Dynamic Puzzle Types:** Includes grid selection, image ordering, spatial reasoning, categorization, and more — all randomized to minimize pattern exploitation.
 - **Real-Time Scoring:** Responses are evaluated in real time and mapped onto a psychometric model to determine AQ scores.
@@ -25,7 +25,7 @@ The **Abstract Quotient (AQ)** Test is a research-driven cognitive puzzle experi
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 | Layer        | Tech                     |
 |--------------|--------------------------|
@@ -37,20 +37,20 @@ The **Abstract Quotient (AQ)** Test is a research-driven cognitive puzzle experi
 
 ---
 
-## 🧠 Why Abstraction?
+## Why Abstraction?
 
 Abstraction is the ability to simplify complexity by identifying patterns and generalizing rules — a foundational skill in fields like computer science, mathematics, and engineering. This test aims to explore whether abstraction capability can be measured independently of traditional IQ constructs.
 
 ---
 
-## 🚀 Try it Out
+## Try it Out
 
 Take the AQ Test here:  
-👉 **[https://aq-frontend-cjnb.onrender.com](https://aq-frontend-cjnb.onrender.com)**
+**[https://aq-frontend-cjnb.onrender.com](https://aq-frontend-cjnb.onrender.com)**
 
 ---
 
-## 📬 Contact
+## Contact
 
 This project was built as part of a research initiative. For academic inquiries or collaborations, please visit [abstract-test.com](https://abstract-test.com).
 
