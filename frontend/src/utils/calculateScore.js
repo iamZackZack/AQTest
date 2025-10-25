@@ -74,7 +74,8 @@ export const buildScoreRow = (questions, userAnswers) => {
         break;
       }
 
-      case "either-or": {
+      case "either-or":
+      case "either-or-4": {
         const correctSet = new Set(correct.map((x) => x.toLowerCase()));
         const userVals = Object.values(userAnswer || {}).map((x) =>
           x.toLowerCase()

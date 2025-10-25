@@ -449,6 +449,7 @@ function App() {
   const saveTestResults = () => {
     const cipheredPseudonym = cipherPseudonym(userData.pseudonym || "");
     const { scores, total_score, normalized_score, hardness, facetPercentages } = buildScoreRow(questions, userAnswers);
+    console.log(userAnswers)
 
     // Maps raw total score to a discrete abstraction level category (0–4)
     const mapScoreToAbstractionLevel = (s) => {

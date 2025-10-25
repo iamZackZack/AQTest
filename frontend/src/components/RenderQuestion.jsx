@@ -7,6 +7,7 @@ import DragGroupQuestion from "./DragGroupQuestion";
 import TextEntryQuestion from "./TextEntryQuestion";
 import DragOrderQuestion from "./DragOrderQuestion";
 import EitherOrQuestion from "./EitherOrQuestion";
+import EitherOr4Question from "./EitherOr4Question";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import HexGridQuestion from "./HexGridQuestion";
 
@@ -92,6 +93,16 @@ const RenderQuestion = ({
           handleEitherOrSelect={handleEitherOrSelect}
         />
       );
+    case "either-or-4":
+      return (
+        <EitherOr4Question
+          question={question}
+          userAnswers={userAnswers}
+          setUserAnswers={setUserAnswers}
+          handleEitherOrSelect={handleEitherOrSelect}
+        />
+      );
+
     case "hex-grid":
       return (
         <HexGridQuestion
