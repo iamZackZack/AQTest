@@ -1,68 +1,78 @@
-# Generates the report at the end of a completion of a test.
+# Generates the report PDF (concurrency-safe, output path passed via CLI).
 
-# Imports
 import sys
-import pandas as pd
-import matplotlib.pyplot as plt
-import fitz
+from pathlib import Path
 from datetime import datetime
+import fitz  # PyMuPDF
 
-# Parse CLI arguments
-score = float(sys.argv[1])
-level = float(sys.argv[2])
-facet_scores = list(map(int, sys.argv[3:]))
+# Expected CLI args:
+# 1: score (percent)
+# 2: level (0..4)
+# 3-7: facet scores (RA, PR, G, R, LC) in percent
+# 8: out_path (where to save the PDF)
 
-# Abstraction level
-level_names = {
-    0: "Pre-abstraction",
-    1: "Recognize patterns and categorize representations",
-    2: "Transfer and identify context",
-    3: "Adapt patterns and group attributes",
-    4: "Freely navigate abstract concepts"
-}
-level_text = level_names[level]
+def main():
+    if len(sys.argv) < 9:
+      sys.stderr.write(
+          "Usage: python3 generate_report.py <score> <level> <RA> <PR> <G> <R> <LC> <out_path>\n"
+      )
+      sys.exit(1)
 
-# Load the empty PDF template
-doc = fitz.open("reports/report_template.pdf")
-page = doc[0]
+    try:
+        score = float(sys.argv[1])
+        level = int(float(sys.argv[2]))
+        level = max(0, min(4, level))
+        facet_scores = list(map(int, sys.argv[3:8]))  # RA, PR, G, R, LC
+        out_path = Path(sys.argv[8])
+    except Exception as e:
+        sys.stderr.write(f"Argument parsing error: {e}\n")
+        sys.exit(1)
 
-# Insert date into the PDF
-page.insert_text((95, 272), datetime.today().strftime("%B %d, %Y"), fontsize=11)
+    # Resolve template relative to this script
+    script_dir = Path(__file__).resolve().parent
+    template_pdf = script_dir / "report_template.pdf"
+    if not template_pdf.exists():
+        sys.stderr.write(f"Template not found: {template_pdf}\n")
+        sys.exit(1)
 
-# Insert percentile score into the PDF
-page.insert_text((244, 348), f"{score}%", fontsize=11, color=(0, 0, 0))
+    # Open the template
+    doc = fitz.open(str(template_pdf))
 
-# Insert marker level table into the PDF
-y_offsets = {
-    0: 443,   # Row for Level 0
-    1: 475,   # Row for Level 1
-    2: 510,   # Row for Level 2
-    3: 547,   # Row for Level 3
-    4: 578    # Row for Level 4
-}
-circle_x = 508
-circle_y = y_offsets[level] + 5
-radius = 5
+    # --- Page 1 ---
+    page = doc[0]
+    # Date
+    page.insert_text((95, 272), datetime.today().strftime("%B %d, %Y"), fontsize=11)
+    # Percentile score
+    page.insert_text((244, 348), f"{int(round(score))}%", fontsize=11, color=(0, 0, 0))
+    # Level marker (red circle)
+    y_offsets = {
+        0: 443,  # Level 0
+        1: 475,  # Level 1
+        2: 510,  # Level 2
+        3: 547,  # Level 3
+        4: 578,  # Level 4
+    }
+    circle_x = 508
+    circle_y = y_offsets[level] + 5
+    page.draw_circle(center=(circle_x, circle_y), radius=5, color=(1, 0, 0), fill=(1, 0, 0))
 
-page.draw_circle(
-    center=(circle_x, circle_y),
-    radius=radius,
-    color=(1, 0, 0),
-    fill=(1, 0, 0)
-)
+    # --- Page 2 ---
+    page2 = doc[1]
+    facet_coords = {
+        0: (480, 236),  # RA
+        1: (480, 327),  # PR
+        2: (480, 410),  # G
+        3: (480, 498),  # R
+        4: (480, 585),  # LC
+    }
+    for i, s in enumerate(facet_scores):
+        x, y = facet_coords[i]
+        page2.insert_text((x, y), f"{int(s)}%", fontsize=11, color=(0, 0, 0))
 
-# Insert Facet Scores into the PDF
-page2 = doc[1]
-facet_coords = {
-    0: (480, 236),  # Reflective Abstraction
-    1: (480, 327),  # Pattern Recognition
-    2: (480, 410),  # Generalisation
-    3: (480, 498),  # Reduction
-    4: (480, 585)   # Levels and Context
-}
-for i, s in enumerate(facet_scores):
-    x, y = facet_coords[i]
-    page2.insert_text((x, y), f"{s}%", fontsize=11, color=(0, 0, 0))
+    # Ensure output directory exists and save
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(str(out_path))
+    doc.close()
 
-# Save report
-doc.save("reports/final_report.pdf")
+if __name__ == "__main__":
+    main()

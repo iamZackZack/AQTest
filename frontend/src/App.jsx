@@ -112,6 +112,27 @@ function App() {
   const [showLadybug, setShowLadybug] = useState(false);
   const [showGust, setShowGust] = useState(false);
 
+  // Time tracking
+  const [timeSpentByQ, setTimeSpentByQ] = useState({});
+  const [activeTimer, setActiveTimer] = useState({ questionId: null, startedAt: null });
+
+  // Helper functions for question timing
+  const startTimerFor = (questionId) => {
+    setActiveTimer({ questionId, startedAt: Date.now() });
+  };
+
+  const stopTimerFor = () => {
+    const { questionId, startedAt } = activeTimer;
+    if (!questionId || !startedAt) return;
+
+    const delta = Date.now() - startedAt;
+    setTimeSpentByQ((prev) => ({
+      ...prev,
+      [questionId]: (prev[questionId] || 0) + delta,
+    }));
+    setActiveTimer({ questionId: null, startedAt: null });
+  };
+
   // Fetches questions from the appropriate API endpoint (based on selected language)
   // and sets the initial state with the first question's shuffled options
   useEffect(() => {
@@ -125,6 +146,10 @@ function App() {
         if (res.data.length > 0 && Array.isArray(res.data[0].options)) {
           setQuestions(res.data);
           setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
+
+          // Start timing for the first question
+          const firstId = res.data[0]._id;
+          startTimerFor(firstId);
         } else {
           // console.error("No questions returned or missing options field");
         }
@@ -169,6 +194,27 @@ function App() {
     }
   }, [currentQuestionIndex, firstRenderHandled, backgroundStep]);
   
+  // Pause when the tab is hidden; resume when visible:
+  useEffect(() => {
+    const onVis = () => {
+      if (document.hidden) {
+        stopTimerFor();
+      } else {
+        const qId = questions[currentQuestionIndex]?._id;
+        if (qId) startTimerFor(qId);
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [questions, currentQuestionIndex]);
+
+  // Capture “leave page”
+  useEffect(() => {
+    const onUnload = () => stopTimerFor();
+    window.addEventListener("beforeunload", onUnload);
+    return () => window.removeEventListener("beforeunload", onUnload);
+  }, [activeTimer]);
+
   // Handles user interaction with answer options for different question types.
   // Updates both the userAnswers state (mapped by question ID) and the selectedAnswers UI state.
   const handleAnswerClick = (option) => {
@@ -381,6 +427,7 @@ function App() {
   // Ensures answer states are initialized for special types like text-entry and drag-group.
   // If there are no more questions, navigates to the demographics page.
   const proceedToNextQuestion = (currentQuestion) => {
+    stopTimerFor();
 
     // Save the current text-entry answer into userAnswers
     if (currentQuestion.type === "text-entry") {
@@ -425,6 +472,7 @@ function App() {
           [nextIndex]: shuffleArray(nextQuestion.options),
         }));
       }
+      startTimerFor(nextQuestion._id);
     } else {
       // End of quiz: go to demographics page
       setCurrentPage("demographics");
@@ -436,20 +484,27 @@ function App() {
   const handlePrevQuestion = () => {
     setDirection(-1); // Set direction for transition animation
     if (currentQuestionIndex > 0) {
+      stopTimerFor();
       const prevIndex = currentQuestionIndex - 1;
       setCurrentQuestionIndex(prevIndex);
-      
+
       const prevQuestionId = questions[prevIndex]._id;
       setSelectedAnswers(userAnswers[prevQuestionId] || []);
+    
+      startTimerFor(prevQuestionId);
     }
   };
 
   // Handles calculation and submission of final test results.
   // Computes scores, abstraction level, and stores demographic and answer data to the backend.
   const saveTestResults = () => {
+    stopTimerFor();
+
+    // align timings both by questionId map and as ordered array (ms)
+    const timingArrayMs = questions.map(q => timeSpentByQ[q._id] || 0);
+
     const cipheredPseudonym = cipherPseudonym(userData.pseudonym || "");
     const { scores, total_score, normalized_score, hardness, facetPercentages } = buildScoreRow(questions, userAnswers);
-    console.log(userAnswers)
 
     // Maps raw total score to a discrete abstraction level category (0–4)
     const mapScoreToAbstractionLevel = (s) => {
@@ -471,6 +526,8 @@ function App() {
       useName: userData.rankConsent ?? true,
       abstractionLevel: abstractionLvl,
       timestamp: new Date().toISOString(),
+      timeByQuestionMs: timeSpentByQ,
+      timeByOrderMs: timingArrayMs,
       demographics: {
         university: userData.university,
         degree: userData.degree,
@@ -499,6 +556,9 @@ function App() {
   // Resets the application state to initial values, clearing all user data and answers.
   // Navigates to the specified page (e.g. "language", "story", or "quiz").
   const resetApp = (goToWindow) => {
+    stopTimerFor();
+    setTimeSpentByQ({});
+    setActiveTimer({ questionId: null, startedAt: null });
     setUserData({});
     setPseudonym("");
     setUserAnswers({});

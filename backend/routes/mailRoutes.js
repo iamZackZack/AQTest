@@ -1,52 +1,68 @@
 const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-const { execSync } = require("child_process");
+const { execFile } = require("child_process");
+const { promisify } = require("util");
+const path = require("path");
+const fs = require("fs/promises");
+const crypto = require("crypto");
 const Answer = require("../models/Answer");
 
-// Route to generate and send a report via email
+const execFileAsync = promisify(execFile);
+
+// POST /api/mail
 router.post("/", async (req, res) => {
   const { pseudonym, email } = req.body;
 
-  // Validate request body
   if (!pseudonym || !email) {
     return res.status(400).json({ message: "Missing pseudonym or email" });
   }
 
   try {
-    // Lookup player by pseudonym only
-    const player = await Answer.findOne({ pseudonym });
-    
-
+    // 1) Look up results for this pseudonym
+    const player = await Answer.findOne({ pseudonym }).lean();
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
     }
 
-    // Extract necessary data from player object
-    const finalScore = player.finalScore;
-    const abstractionLvl = player.abstractionLevel;
+    // 2) Extract scores safely
+    const finalScore = player.finalScore ?? 0;
+    const abstractionLvl = player.abstractionLevel ?? 0;
+    const fscores = player.facetScores || {};
     const facetScores = [
-      player.facetScores.RA ?? 0,
-      player.facetScores.PR ?? 0,
-      player.facetScores.G ?? 0,
-      player.facetScores.R ?? 0,
-      player.facetScores.LC ?? 0
+      fscores.RA ?? 0,
+      fscores.PR ?? 0,
+      fscores.G  ?? 0,
+      fscores.R  ?? 0,
+      fscores.LC ?? 0,
     ];
 
-    // Run Python script to generate report with score arguments
-    const args = [finalScore, abstractionLvl, ...facetScores].join(" ");
-    execSync(`python3 reports/generate_report.py ${args}`, { stdio: "inherit" });
+    // 3) Unique output path (avoid collisions)
+    const outName = `report-${crypto.randomUUID()}.pdf`;
+    const outPath = path.join("/tmp", outName);
 
-    // Set up email transport using Gmail credentials
+    // 4) Run Python to generate the PDF (async & safe)
+    //    args: <score> <level> <RA> <PR> <G> <R> <LC> <out_path>
+    const pyScript = path.join(process.cwd(), "reports", "generate_report.py");
+    const args = [
+      pyScript,
+      String(finalScore),
+      String(abstractionLvl),
+      ...facetScores.map(String),
+      outPath,
+    ];
+
+    await execFileAsync("python3", args, { cwd: process.cwd() });
+
+    // 5) Send email with PDF attached
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
-      }
+        pass: process.env.MAIL_PASS, // use an App Password for Gmail
+      },
     });
 
-    // Define email content and attach the generated PDF report
     const mailOptions = {
       from: process.env.MAIL_USER,
       to: email,
@@ -55,20 +71,21 @@ router.post("/", async (req, res) => {
       attachments: [
         {
           filename: "Abstraction_Report.pdf",
-          path: "reports/final_report.pdf",
-          contentType: "application/pdf"
-        }
-      ]
+          path: outPath,
+          contentType: "application/pdf",
+        },
+      ],
     };
 
-    // Send the email
     await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: "Report sent!" });
+    // 6) Clean up temp file
+    try { await fs.unlink(outPath); } catch (_) {}
 
+    return res.status(200).json({ message: "Report sent!" });
   } catch (err) {
-    // Handle any errors during the process
-    res.status(500).json({ message: "Failed to send report." });
+    console.error("Mail route error:", err);
+    return res.status(500).json({ message: "Failed to send report." });
   }
 });
 
