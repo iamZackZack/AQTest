@@ -146,10 +146,6 @@ function App() {
         if (res.data.length > 0 && Array.isArray(res.data[0].options)) {
           setQuestions(res.data);
           setShuffledOptionsMap({ 0: shuffleArray(res.data[0].options) });
-
-          // Start timing for the first question
-          const firstId = res.data[0]._id;
-          startTimerFor(firstId);
         } else {
           // console.error("No questions returned or missing options field");
         }
@@ -194,6 +190,19 @@ function App() {
     }
   }, [currentQuestionIndex, firstRenderHandled, backgroundStep]);
   
+  useEffect(() => {
+    if (
+      currentPage === "quiz" &&
+      showBook &&
+      questions.length > 0
+    ) {
+      const qId = questions[currentQuestionIndex]?._id;
+      if (qId && activeTimer.questionId !== qId) {
+        startTimerFor(qId);
+      }
+    }
+  }, [currentPage, showBook, currentQuestionIndex, questions]);
+
   // Pause when the tab is hidden; resume when visible:
   useEffect(() => {
     const onVis = () => {
@@ -376,6 +385,8 @@ function App() {
   // Handles transition to the next question, including timed visual effects 
   // at specific points (rain after Q1, shadow before Q10, ladybug at Q20, gust at Q24).
   const handleNextQuestion = () => {
+    stopTimerFor();
+
     const currentQuestion = questions[currentQuestionIndex];
     setDirection(1);
 
@@ -427,8 +438,6 @@ function App() {
   // Ensures answer states are initialized for special types like text-entry and drag-group.
   // If there are no more questions, navigates to the demographics page.
   const proceedToNextQuestion = (currentQuestion) => {
-    stopTimerFor();
-
     // Save the current text-entry answer into userAnswers
     if (currentQuestion.type === "text-entry") {
       setUserAnswers((prevAnswers) => ({
@@ -472,7 +481,6 @@ function App() {
           [nextIndex]: shuffleArray(nextQuestion.options),
         }));
       }
-      startTimerFor(nextQuestion._id);
     } else {
       // End of quiz: go to demographics page
       setCurrentPage("demographics");
@@ -484,13 +492,17 @@ function App() {
   const handlePrevQuestion = () => {
     setDirection(-1); // Set direction for transition animation
     if (currentQuestionIndex > 0) {
+      // stop current question right when back is pressed
       stopTimerFor();
-      const prevIndex = currentQuestionIndex - 1;
-      setCurrentQuestionIndex(prevIndex);
 
-      const prevQuestionId = questions[prevIndex]._id;
+      const prevIndex = currentQuestionIndex - 1;
+      const prevQuestion = questions[prevIndex];
+
+      setCurrentQuestionIndex(prevIndex);
+      const prevQuestionId = prevQuestion._id;
       setSelectedAnswers(userAnswers[prevQuestionId] || []);
-    
+
+      // ⏱ resume timing the previous
       startTimerFor(prevQuestionId);
     }
   };
@@ -501,7 +513,13 @@ function App() {
     stopTimerFor();
 
     // align timings both by questionId map and as ordered array (ms)
-    const timingArrayMs = questions.map(q => timeSpentByQ[q._id] || 0);
+    const penaltyIdx = new Set([8, 17, 20]); // 0-based indices
+
+    // Build adjusted timings (array aligned to order)
+    const timingArrayMs = questions.map((q, idx) => {
+      const raw = timeSpentByQ[q._id] || 0;
+      return penaltyIdx.has(idx) ? Math.max(0, raw - 2000) : raw;
+    });
 
     const cipheredPseudonym = cipherPseudonym(userData.pseudonym || "");
     const { scores, total_score, normalized_score, hardness, facetPercentages } = buildScoreRow(questions, userAnswers);
@@ -526,8 +544,7 @@ function App() {
       useName: userData.rankConsent ?? true,
       abstractionLevel: abstractionLvl,
       timestamp: new Date().toISOString(),
-      timeByQuestionMs: timeSpentByQ,
-      timeByOrderMs: timingArrayMs,
+      timeByQuestionMs: timingArrayMs,
       demographics: {
         university: userData.university,
         degree: userData.degree,
@@ -777,7 +794,6 @@ function App() {
           goToWelcome={() => resetApp("welcome")} 
         />
       )}
-
     </div>
   );
 

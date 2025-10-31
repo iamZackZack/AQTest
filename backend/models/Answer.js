@@ -12,10 +12,6 @@ const AnswerSchema = new mongoose.Schema({
   useName: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
     timeByQuestionMs: {
-      type: Object, // { [questionId]: milliseconds }
-      default: {},
-    },
-    timeByOrderMs: {
       type: [Number], // [ms, ms, ms, ...]
       default: [],
     },
